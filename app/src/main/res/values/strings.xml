@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MultiCamera</string>
+    <string name="button1">camera0</string>
+    <string name="button2">camera1</string>
+    <string name="button3">camera2</string>
+    <string name="button4">camera3</string>
+    <string name="button5">camera4</string>
+    <string name="button6">camera5</string>
+    <string name="dummy_content">MULTI\nCAMERA</string>
+</resources>
