@@ -436,9 +436,10 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
 	public void onClick(View v) {       
 		switch (v.getId()) {
 		case R.id.button1:{
-        for(int i=0; i<Camera_num; i++){
-                mThread[i].start();
-        }
+    //    for(int i=0; i<Camera_num; i++){
+    //            mThread[i].start();
+    //    }
+			mThread[0].start();
 		}
 		break;
 		case R.id.button2:{
@@ -452,9 +453,11 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
 		case R.id.button4:{
                 mThread[3].start();
 		}
+		break;
 		case R.id.button5:{
                 mThread[4].start();
 		}
+		break;
 		case R.id.button6:{
                 mThread[5].start();
 		}
