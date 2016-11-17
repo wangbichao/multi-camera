@@ -94,7 +94,7 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
 	 * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
 	 */
 	private static final boolean AUTO_HIDE = true;
-    private static int MAX_CAMERA = 6;
+    private static int MAX_CAMERA = 8;
 
 	/**
 	 * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
@@ -120,7 +120,7 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
 
     private boolean Flag_CameraRelease = false;
 	private boolean[] CAMERA_INITED;
-	private Button[] mCameraTestButton;
+//	private Button[] mCameraTestButton;
 	private SurfaceView[] mSurfaceView;
 	private Camera[] mCamera;
     private MultiCameraThread[] mThread;    
@@ -150,7 +150,7 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
 		final View contentView = findViewById(R.id.fullscreen_content);
       
         CAMERA_INITED = new boolean[MAX_CAMERA];
-    	mCameraTestButton = new Button[MAX_CAMERA];
+//    	mCameraTestButton = new Button[MAX_CAMERA];
     	mSurfaceView = new SurfaceView[MAX_CAMERA];
     	mCamera = new Camera[MAX_CAMERA];
         mThread = new MultiCameraThread[MAX_CAMERA];
@@ -159,22 +159,24 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
             mCamera[i] = null;
         }
 		mSurfaceView[0] = (SurfaceView)findViewById(R.id.surfaceView1);
-		mSurfaceView[1] = (SurfaceView)findViewById(R.id.surfaceView2);		
+		mSurfaceView[1] = (SurfaceView)findViewById(R.id.surfaceView2);
 		mSurfaceView[2] = (SurfaceView)findViewById(R.id.surfaceView3);
 		mSurfaceView[3] = (SurfaceView)findViewById(R.id.surfaceView4);
 		mSurfaceView[4] = (SurfaceView)findViewById(R.id.surfaceView5);
 		mSurfaceView[5] = (SurfaceView)findViewById(R.id.surfaceView6);
+		mSurfaceView[6] = (SurfaceView)findViewById(R.id.surfaceView7);
+		mSurfaceView[7] = (SurfaceView)findViewById(R.id.surfaceView8);
 
-		mCameraTestButton[0] = (Button)findViewById(R.id.button1);
-		mCameraTestButton[1] = (Button)findViewById(R.id.button2);
-		mCameraTestButton[2] = (Button)findViewById(R.id.button3);
-		mCameraTestButton[3] = (Button)findViewById(R.id.button4);
-		mCameraTestButton[4] = (Button)findViewById(R.id.button5);
-		mCameraTestButton[5] = (Button)findViewById(R.id.button6);
+//		mCameraTestButton[0] = (Button)findViewById(R.id.button1);
+//		mCameraTestButton[1] = (Button)findViewById(R.id.button2);
+//		mCameraTestButton[2] = (Button)findViewById(R.id.button3);
+//		mCameraTestButton[3] = (Button)findViewById(R.id.button4);
+//		mCameraTestButton[4] = (Button)findViewById(R.id.button5);
+//		mCameraTestButton[5] = (Button)findViewById(R.id.button6);
 
-        for(int i=0; i<MAX_CAMERA; i++) {
-    		mCameraTestButton[i].setOnClickListener(this);
-        }
+//        for(int i=0; i<MAX_CAMERA; i++) {
+//    		mCameraTestButton[i].setOnClickListener(this);
+//        }
 
         for(int i=0; i<MAX_CAMERA; i++) {
                mThread[i] = new MultiCameraThread(i);
@@ -455,11 +457,9 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
 	@Override
 	public void onClick(View v) {
 	    Log.d(TAG,new Exception().getStackTrace()[0].getMethodName());
+/*
 		switch (v.getId()) {
 		case R.id.button1:{
-    //    for(int i=0; i<Camera_num; i++){
-    //            mThread[i].start();
-    //    }
 			mThread[0].start();
 		}
 		break;
@@ -486,7 +486,7 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
 		default:
 			break;
 		}	
-		
+*/
     }
 
 }
