@@ -118,6 +118,7 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
 	 */
 	private SystemUiHider mSystemUiHider;
 
+    private boolean Flag_CameraRelease = false;
 	private boolean[] CAMERA_INITED;
 	private Button[] mCameraTestButton;
 	private SurfaceView[] mSurfaceView;
@@ -126,8 +127,10 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
 	private Map<Integer, Runnable> allowablePermissionRunnables = new HashMap<>();
 	private Map<Integer, Runnable> disallowablePermissionRunnables = new HashMap<>();
 
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG,new Exception().getStackTrace()[0].getMethodName());
 		super.onCreate(savedInstanceState);
 
         requestPermission(1, Manifest.permission.CAMERA, new Runnable() {
@@ -151,7 +154,7 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
     	mSurfaceView = new SurfaceView[MAX_CAMERA];
     	mCamera = new Camera[MAX_CAMERA];
         mThread = new MultiCameraThread[MAX_CAMERA];
-        for(int i=0; i<MAX_CAMERA; i++){
+        for(int i=0; i<MAX_CAMERA; i++) {
             CAMERA_INITED[i] = false;
             mCamera[i] = null;
         }
@@ -169,12 +172,12 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
 		mCameraTestButton[4] = (Button)findViewById(R.id.button5);
 		mCameraTestButton[5] = (Button)findViewById(R.id.button6);
 
-        for(int i=0; i<MAX_CAMERA; i++){
+        for(int i=0; i<MAX_CAMERA; i++) {
     		mCameraTestButton[i].setOnClickListener(this);
         }
-        
-        for(int i=0; i<MAX_CAMERA; i++){
-    		mThread[i] = new MultiCameraThread(i);
+
+        for(int i=0; i<MAX_CAMERA; i++) {
+               mThread[i] = new MultiCameraThread(i);
         }
 
 		//mSurfaceView.setOnClickListener((OnClickListener) this);
@@ -280,6 +283,7 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Log.d(TAG,new Exception().getStackTrace()[0].getMethodName());
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -315,9 +319,8 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
 			mCamera[cameraid].stopPreview();
 			mCamera[cameraid].release();
             mCamera[cameraid] = null;
-		}
+        }
     }
-
 
     public class MultiCameraThread extends Thread {
 
@@ -330,12 +333,11 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
     	public void run() {
     		Log.d(TAG ,"open camera" + camera_id + " ---Number of  Cameras is " + Camera_num);
 
-            if (Camera_num <= camera_id){
+            if (Camera_num <= camera_id) {
                	Log.d(TAG ,"Not found camera camera_id");
                 return; 
             }            
-            if(!CAMERA_INITED[camera_id])
-            {
+            if(!CAMERA_INITED[camera_id]) {
         		Log.d(TAG ,"new thread open camera is " + camera_id);
                 try {
                     mCamera[camera_id] = Camera.open(camera_id);
@@ -358,12 +360,20 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
 
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
+	    Log.d(TAG,new Exception().getStackTrace()[0].getMethodName());
 		super.onPostCreate(savedInstanceState);
 
 		// Trigger the initial hide() shortly after the activity has been
 		// created, to briefly hint to the user that UI controls
 		// are available.
 		delayedHide(100);
+        // open all camera
+        if(!Flag_CameraRelease) {
+            for(int i=0; i<Camera_num; i++){
+                mThread[i].start();
+            }
+            Flag_CameraRelease = true;
+        }
 	}
 
 	/**
@@ -376,9 +386,7 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
 		public boolean onTouch(View view, MotionEvent motionEvent) {
 			if (AUTO_HIDE) {
 				delayedHide(AUTO_HIDE_DELAY_MILLIS);
-			}
-
-					
+             }
 			return false;
 		}
 	};
@@ -402,38 +410,51 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
 	
 	@Override
 	protected void onStart() {
+	    Log.d(TAG,new Exception().getStackTrace()[0].getMethodName());
 		super.onStart();
     }
 
 	@Override
 	protected void onResume() {
+	    Log.d(TAG,new Exception().getStackTrace()[0].getMethodName());
 		super.onResume();
+        // open all camera
+        if(!Flag_CameraRelease) {
+            for(int i=0; i<Camera_num; i++){
+                mThread[i].start();
+            }
+            Flag_CameraRelease = true;
+        }
 	}
 
 	@Override
 	protected void onPause() {
+	    Log.d(TAG,new Exception().getStackTrace()[0].getMethodName());
 		super.onPause();
-        for(int i=0; i<MAX_CAMERA; i++)
+        for(int i=0; i<Camera_num; i++)
             EndCamera(i);
+        Flag_CameraRelease = false;
 	}
 
 	@Override
 	protected void onStop() {
+	    Log.d(TAG,new Exception().getStackTrace()[0].getMethodName());
 		super.onStop();
-        for(int i=0; i<MAX_CAMERA; i++)
-            EndCamera(i);
 	}
 
 
 	@Override
 	protected void onDestroy() {
+	    Log.d(TAG,new Exception().getStackTrace()[0].getMethodName());
 		super.onDestroy();
-        for(int i=0; i<MAX_CAMERA; i++)
+        for(int i=0; i<Camera_num; i++)
             EndCamera(i);
+        Flag_CameraRelease = false;
     }
     
 	@Override
-	public void onClick(View v) {       
+	public void onClick(View v) {
+	    Log.d(TAG,new Exception().getStackTrace()[0].getMethodName());
 		switch (v.getId()) {
 		case R.id.button1:{
     //    for(int i=0; i<Camera_num; i++){
