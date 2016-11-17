@@ -94,7 +94,7 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
 	 * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
 	 */
 	private static final boolean AUTO_HIDE = true;
-    private static int MAX_CAMERA = 8;
+    private static int MAX_CAMERA = 6;
 
 	/**
 	 * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
@@ -164,8 +164,6 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
 		mSurfaceView[3] = (SurfaceView)findViewById(R.id.surfaceView4);
 		mSurfaceView[4] = (SurfaceView)findViewById(R.id.surfaceView5);
 		mSurfaceView[5] = (SurfaceView)findViewById(R.id.surfaceView6);
-		mSurfaceView[6] = (SurfaceView)findViewById(R.id.surfaceView7);
-		mSurfaceView[7] = (SurfaceView)findViewById(R.id.surfaceView8);
 
 //		mCameraTestButton[0] = (Button)findViewById(R.id.button1);
 //		mCameraTestButton[1] = (Button)findViewById(R.id.button2);
