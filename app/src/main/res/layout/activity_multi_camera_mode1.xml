@@ -60,8 +60,8 @@
 
                 <SurfaceView
                     android:id="@+id/surfaceView1"
-                    android:layout_marginLeft="300px"
-                    android:layout_marginRight="300px"
+                    android:layout_marginLeft="175dp"
+                    android:layout_marginRight="175dp"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1" />
@@ -116,8 +116,8 @@
 
                 <SurfaceView
                     android:id="@+id/surfaceView6"
-                    android:layout_marginLeft="300px"
-                    android:layout_marginRight="300px"
+                    android:layout_marginLeft="175dp"
+                    android:layout_marginRight="175dp"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1" />
