@@ -5,7 +5,7 @@ import java.io.IOException;
 import android.app.Activity;
 import android.graphics.ImageFormat;
 import com.example.tim.multicamera.R;
-import com.example.tim.multicamera.util.SystemUiHider;
+//import com.example.tim.multicamera.util.SystemUiHider;
 
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -93,30 +93,30 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
 	 * Whether or not the system UI should be auto-hidden after
 	 * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
 	 */
-	private static final boolean AUTO_HIDE = true;
+	//private static final boolean AUTO_HIDE = true;
     private static int MAX_CAMERA = 6;
 
 	/**
 	 * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
 	 * user interaction before hiding the system UI.
 	 */
-	private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
+	//private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
 
 	/**
 	 * If set, will toggle the system UI visibility upon interaction. Otherwise,
 	 * will show the system UI visibility upon interaction.
 	 */
-	private static final boolean TOGGLE_ON_CLICK = true;
+	//private static final boolean TOGGLE_ON_CLICK = true;
 
 	/**
 	 * The flags to pass to {@link SystemUiHider#getInstance}.
 	 */
-	private static final int HIDER_FLAGS = SystemUiHider.FLAG_HIDE_NAVIGATION;
+	//private static final int HIDER_FLAGS = SystemUiHider.FLAG_HIDE_NAVIGATION;
 	private int Camera_num = 0;
 	/**
 	 * The instance of the {@link SystemUiHider} for this activity.
 	 */
-	private SystemUiHider mSystemUiHider;
+	//private SystemUiHider mSystemUiHider;
 
     private boolean Flag_CameraRelease = false;
 	private boolean[] CAMERA_INITED;
@@ -179,9 +179,13 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
         for(int i=0; i<MAX_CAMERA; i++) {
                mThread[i] = new MultiCameraThread(i);
         }
+        
+		Camera_num = Camera.getNumberOfCameras();
+		Log.d(TAG ," Number of  Cameras is " + Camera_num);
+
 
 		//mSurfaceView.setOnClickListener((OnClickListener) this);
-		
+/*		
 		// Set up an instance of SystemUiHider to control the system UI for
 		// this activity.
 		mSystemUiHider = SystemUiHider.getInstance(this, contentView,HIDER_FLAGS);
@@ -236,16 +240,14 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
 				}
 			}
 		});
-
-		Camera_num = Camera.getNumberOfCameras();
-		Log.d(TAG ," Number of  Cameras is " + Camera_num);
-
+*/
 		// Upon interacting with UI controls, delay any scheduled hide()
 		// operations to prevent the jarring behavior of controls going away
 		// while interacting with the UI.
 		//findViewById(R.id.dummy_button).setOnTouchListener(
 		//		mDelayHideTouchListener);
 	}
+
 
     //permission strat
   /**
@@ -296,14 +298,12 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
     }
     //permission end
 
-
-
     protected void StartCamera(int cameraid) {
 		Log.d(TAG ,"StartCamera " + cameraid + "=== Number of  Cameras is " + Camera_num);
         try {
             mCamera[cameraid] = Camera.open(cameraid);
         	mCamera[cameraid].setPreviewDisplay(mSurfaceView[cameraid].getHolder());
-        	mCamera[cameraid].startPreview();
+			mCamera[cameraid].startPreview();
 
         } catch (IOException e) {
         	mCamera[cameraid].release();
@@ -343,8 +343,9 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
                     mCamera[camera_id] = Camera.open(camera_id);
                 	mCamera[camera_id].setPreviewDisplay(mSurfaceView[camera_id].getHolder());
                 	mCamera[camera_id].startPreview();
+					mCamera[camera_id].setDisplayOrientation(90);
 
-                } catch (IOException e) {
+				} catch (IOException e) {
                 	mCamera[camera_id].release();
                 	mCamera[camera_id] = null;
                 	e.printStackTrace();
@@ -366,7 +367,7 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
 		// Trigger the initial hide() shortly after the activity has been
 		// created, to briefly hint to the user that UI controls
 		// are available.
-		delayedHide(100);
+		// delayedHide(100);
         // open all camera
         if(!Flag_CameraRelease) {
             for(int i=0; i<Camera_num; i++){
@@ -381,6 +382,7 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
 	 * system UI. This is to prevent the jarring behavior of controls going away
 	 * while interacting with activity UI.
 	 */
+/*
 	View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
 		@Override
 		public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -398,16 +400,17 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
 			mSystemUiHider.hide();
 		}
 	};
-
+*/
 	/**
 	 * Schedules a call to hide() in [delay] milliseconds, canceling any
 	 * previously scheduled calls.
 	 */
+/*
 	private void delayedHide(int delayMillis) {
 		mHideHandler.removeCallbacks(mHideRunnable);
 		mHideHandler.postDelayed(mHideRunnable, delayMillis);
 	}
-	
+*/	
 	@Override
 	protected void onStart() {
 	    Log.d(TAG,new Exception().getStackTrace()[0].getMethodName());
@@ -441,7 +444,6 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
 	    Log.d(TAG,new Exception().getStackTrace()[0].getMethodName());
 		super.onStop();
 	}
-
 
 	@Override
 	protected void onDestroy() {
