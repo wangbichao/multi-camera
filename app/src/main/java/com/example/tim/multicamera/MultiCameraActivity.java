@@ -84,7 +84,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
- * 
+ *
  * @see SystemUiHider
  */
 public class MultiCameraActivity extends Activity implements OnClickListener,FragmentCompat.OnRequestPermissionsResultCallback{
@@ -123,7 +123,8 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
 //	private Button[] mCameraTestButton;
 	private SurfaceView[] mSurfaceView;
 	private Camera[] mCamera;
-    private MultiCameraThread[] mThread;    
+    private MultiOpenCameraThread[] mOpenThread;
+    private MultiCloseCameraThread[] mCloseThread;
 	private Map<Integer, Runnable> allowablePermissionRunnables = new HashMap<>();
 	private Map<Integer, Runnable> disallowablePermissionRunnables = new HashMap<>();
 
@@ -144,16 +145,18 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
             Log.e(TAG ,"App have NO permission to open camera");
            }
         });
-        
+
 		setContentView(R.layout.activity_multi_camera);
 		final View controlsView = findViewById(R.id.fullscreen_content_controls);
 		final View contentView = findViewById(R.id.fullscreen_content);
-      
+
         CAMERA_INITED = new boolean[MAX_CAMERA];
 //    	mCameraTestButton = new Button[MAX_CAMERA];
     	mSurfaceView = new SurfaceView[MAX_CAMERA];
     	mCamera = new Camera[MAX_CAMERA];
-        mThread = new MultiCameraThread[MAX_CAMERA];
+        mOpenThread = new MultiOpenCameraThread[MAX_CAMERA];
+        mCloseThread = new MultiCloseCameraThread[MAX_CAMERA];
+
         for(int i=0; i<MAX_CAMERA; i++) {
             CAMERA_INITED[i] = false;
             mCamera[i] = null;
@@ -177,15 +180,19 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
 //        }
 
         for(int i=0; i<MAX_CAMERA; i++) {
-               mThread[i] = new MultiCameraThread(i);
+               mOpenThread[i] = new MultiOpenCameraThread(i);
         }
-        
+
+        for(int i=0; i<MAX_CAMERA; i++) {
+               mCloseThread[i] = new MultiCloseCameraThread(i);
+        }
+
 		Camera_num = Camera.getNumberOfCameras();
 		Log.d(TAG ," Number of  Cameras is " + Camera_num);
 
 
 		//mSurfaceView.setOnClickListener((OnClickListener) this);
-/*		
+/*
 		// Set up an instance of SystemUiHider to control the system UI for
 		// this activity.
 		mSystemUiHider = SystemUiHider.getInstance(this, contentView,HIDER_FLAGS);
@@ -298,35 +305,11 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
     }
     //permission end
 
-    protected void StartCamera(int cameraid) {
-		Log.d(TAG ,"StartCamera " + cameraid + "=== Number of  Cameras is " + Camera_num);
-        try {
-            mCamera[cameraid] = Camera.open(cameraid);
-        	mCamera[cameraid].setPreviewDisplay(mSurfaceView[cameraid].getHolder());
-			mCamera[cameraid].startPreview();
-
-        } catch (IOException e) {
-        	mCamera[cameraid].release();
-        	mCamera[cameraid] = null;
-        	e.printStackTrace();
-        }
-    }
-
-    protected void EndCamera(int cameraid) {
-		Log.d(TAG ,"EndCamera " + cameraid + "=== Number of  Cameras is " + Camera_num);
-        CAMERA_INITED[cameraid] = false;
-		if(null != mCamera[cameraid]){
-			mCamera[cameraid].stopPreview();
-			mCamera[cameraid].release();
-            mCamera[cameraid] = null;
-        }
-    }
-
-    public class MultiCameraThread extends Thread {
+    public class MultiOpenCameraThread extends Thread {
 
         private int camera_id;
 
-    	public MultiCameraThread(int camera_id) {
+    	public MultiOpenCameraThread(int camera_id) {
     		this.camera_id = camera_id;
     	}
 
@@ -335,16 +318,14 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
 
             if (Camera_num <= camera_id) {
                	Log.d(TAG ,"Not found camera camera_id");
-                return; 
-            }            
+                return;
+            }
             if(!CAMERA_INITED[camera_id]) {
         		Log.d(TAG ,"new thread open camera is " + camera_id);
                 try {
                     mCamera[camera_id] = Camera.open(camera_id);
                 	mCamera[camera_id].setPreviewDisplay(mSurfaceView[camera_id].getHolder());
                 	mCamera[camera_id].startPreview();
-					mCamera[camera_id].setDisplayOrientation(90);
-
 				} catch (IOException e) {
                 	mCamera[camera_id].release();
                 	mCamera[camera_id] = null;
@@ -356,25 +337,43 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
 
             CAMERA_INITED[camera_id] = true;
     	}
-        
+
     }
+
+    public class MultiCloseCameraThread extends Thread {
+
+        private int camera_id;
+
+    	public MultiCloseCameraThread(int camera_id) {
+    		this.camera_id = camera_id;
+    	}
+
+    	public void run() {
+    		Log.d(TAG ,"close camera" + camera_id + " ---Number of  Cameras is " + Camera_num);
+
+            if (Camera_num <= camera_id) {
+               	Log.d(TAG ,"Not found camera camera_id");
+                return;
+            }
+            if(null != mCamera[camera_id]) {
+        		Log.d(TAG ,"new thread close camera is " + camera_id);
+                mCamera[camera_id].setPreviewCallback(null);
+                mCamera[camera_id].stopPreview();
+                mCamera[camera_id].release();
+                mCamera[camera_id] = null;
+            } else {
+                Log.d(TAG ,"camera camera_id is not open");
+            }
+            CAMERA_INITED[camera_id] = false;
+    	}
+
+    }
+
 
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
 	    Log.d(TAG,new Exception().getStackTrace()[0].getMethodName());
 		super.onPostCreate(savedInstanceState);
-
-		// Trigger the initial hide() shortly after the activity has been
-		// created, to briefly hint to the user that UI controls
-		// are available.
-		// delayedHide(100);
-        // open all camera
-        if(!Flag_CameraRelease) {
-            for(int i=0; i<Camera_num; i++){
-                mThread[i].start();
-            }
-            Flag_CameraRelease = true;
-        }
 	}
 
 	/**
@@ -410,7 +409,7 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
 		mHideHandler.removeCallbacks(mHideRunnable);
 		mHideHandler.postDelayed(mHideRunnable, delayMillis);
 	}
-*/	
+*/
 	@Override
 	protected void onStart() {
 	    Log.d(TAG,new Exception().getStackTrace()[0].getMethodName());
@@ -424,7 +423,7 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
         // open all camera
         if(!Flag_CameraRelease) {
             for(int i=0; i<Camera_num; i++){
-                mThread[i].start();
+                mOpenThread[i].start();
             }
             Flag_CameraRelease = true;
         }
@@ -435,7 +434,7 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
 	    Log.d(TAG,new Exception().getStackTrace()[0].getMethodName());
 		super.onPause();
         for(int i=0; i<Camera_num; i++)
-            EndCamera(i);
+            mCloseThread[i].start();
         Flag_CameraRelease = false;
 	}
 
@@ -450,42 +449,42 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
 	    Log.d(TAG,new Exception().getStackTrace()[0].getMethodName());
 		super.onDestroy();
         for(int i=0; i<Camera_num; i++)
-            EndCamera(i);
+            mCloseThread[i].start();
         Flag_CameraRelease = false;
     }
-    
+
 	@Override
 	public void onClick(View v) {
 	    Log.d(TAG,new Exception().getStackTrace()[0].getMethodName());
 /*
 		switch (v.getId()) {
 		case R.id.button1:{
-			mThread[0].start();
+			mOpenThread[0].start();
 		}
 		break;
 		case R.id.button2:{
-                mThread[1].start();
+                mOpenThread[1].start();
 		}
-		break;		
+		break;
 		case R.id.button3:{
-                mThread[2].start();
+                mOpenThread[2].start();
 		}
 		break;
 		case R.id.button4:{
-                mThread[3].start();
+                mOpenThread[3].start();
 		}
 		break;
 		case R.id.button5:{
-                mThread[4].start();
+                mOpenThread[4].start();
 		}
 		break;
 		case R.id.button6:{
-                mThread[5].start();
+                mOpenThread[5].start();
 		}
 		break;
 		default:
 			break;
-		}	
+		}
 */
     }
 
