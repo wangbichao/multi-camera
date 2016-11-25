@@ -14,6 +14,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.widget.CompoundButton;
 import android.widget.TextView;
@@ -84,7 +87,8 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
-
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -92,7 +96,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @see SystemUiHider
  */
-public class MultiCameraActivity extends Activity implements OnClickListener,FragmentCompat.OnRequestPermissionsResultCallback{
+public class MultiCameraActivity extends Activity implements OnCheckedChangeListener, FragmentCompat.OnRequestPermissionsResultCallback{
 	public final String TAG = MultiCameraActivity.class.getSimpleName();
 	/**
 	 * Whether or not the system UI should be auto-hidden after
@@ -135,8 +139,10 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
     private MultiCloseCameraThread[] mCloseThread;
 	private Map<Integer, Runnable> allowablePermissionRunnables = new HashMap<>();
 	private Map<Integer, Runnable> disallowablePermissionRunnables = new HashMap<>();
+    private ToggleButton mtogglebutton1;
+    private ToggleButton mtogglebutton2;
 
-	@Override
+    @Override
 	protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG,new Exception().getStackTrace()[0].getMethodName());
 		super.onCreate(savedInstanceState);
@@ -185,6 +191,13 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
 //        for(int i=0; i<MAX_CAMERA; i++) {
 //    		mCameraTestButton[i].setOnClickListener(this);
 //        }
+
+
+        //init togglebutton
+        mtogglebutton1 = (ToggleButton) findViewById(R.id.togglebutton1);
+        mtogglebutton2 = (ToggleButton) findViewById(R.id.togglebutton2);
+        mtogglebutton1.setOnCheckedChangeListener(this);
+        mtogglebutton2.setOnCheckedChangeListener(this);
 
         for(int i=0; i<MAX_CAMERA; i++) {
                mOpenThread[i] = new MultiOpenCameraThread(i);
@@ -458,10 +471,54 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
 		super.onDestroy();
     }
 
+
+    @Override  
+    //set togglebutton listener
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+		switch (buttonView.getId()) {
+    		case R.id.togglebutton1:{
+                if(isChecked){
+                    Toast.makeText(MultiCameraActivity.this, "camera 0/1 ON", Toast.LENGTH_LONG).show();
+                    Log.d(TAG ,"ToggleButton camera 0/1 open");
+                    mOpenThread[0].start();
+                    mOpenThread[1].start();
+                }else{
+                    Toast.makeText(MultiCameraActivity.this, "camera 0/1 OFF", Toast.LENGTH_LONG).show();
+                    Log.d(TAG ,"ToggleButton camera 0/1 close");
+                    mCloseThread[0].start();
+                    mCloseThread[1].start();
+                }
+            }
+            break;
+    		case R.id.togglebutton2:{
+                if(isChecked){
+                    Toast.makeText(MultiCameraActivity.this, "camera 2/3/4/5 ON", Toast.LENGTH_LONG).show();
+                    Log.d(TAG ,"ToggleButton camera 2/3/4/5 open");
+                    mOpenThread[2].start();
+                    mOpenThread[3].start();
+                    mOpenThread[4].start();
+                    mOpenThread[5].start();
+                }else{
+                    Toast.makeText(MultiCameraActivity.this, "camera 2/3/4/5 OFF", Toast.LENGTH_LONG).show();
+                    Log.d(TAG ,"ToggleButton camera 2/3/4/5 close");
+                    mCloseThread[2].start();
+                    mCloseThread[3].start();
+                    mCloseThread[4].start();
+                    mCloseThread[5].start();
+                }
+            }
+    		break;
+    		default:
+    			break;
+		}
+    }  
+
+
+/*    
 	@Override
 	public void onClick(View v) {
 	    Log.d(TAG,new Exception().getStackTrace()[0].getMethodName());
-/*
+
 		switch (v.getId()) {
 		case R.id.button1:{
 			mOpenThread[0].start();
@@ -490,7 +547,56 @@ public class MultiCameraActivity extends Activity implements OnClickListener,Fra
 		default:
 			break;
 		}
-*/
     }
+*/
+
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        /**
+         * 此方法用于初始化菜单，其中menu参数就是即将要显示的Menu实例。 返回true则显示该menu,false 则不显示;
+         * (只会在第一次初始化菜单时调用) Inflate the menu; this adds items to the action bar
+         * if it is present.
+         */
+
+        menu.add(Menu.NONE, Menu.NONE, 1, "menu1");
+        menu.add(Menu.NONE, Menu.NONE, 2, "menu2");
+        menu.add(Menu.NONE, Menu.NONE, 3, "menu3");
+        menu.add(Menu.NONE, Menu.NONE, 4, "menu4");
+        menu.add(Menu.NONE, Menu.NONE, 5, "menu5");
+        menu.add(Menu.NONE, Menu.NONE, 6, "menu6");
+
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        /**
+         * 在onCreateOptionsMenu执行后，菜单被显示前调用；如果菜单已经被创建，则在菜单显示前被调用。 同样的，
+         * 返回true则显示该menu,false 则不显示; （可以通过此方法动态的改变菜单的状态，比如加载不同的菜单等） TODO
+         * Auto-generated method stub
+         */
+        return super.onPrepareOptionsMenu(menu);
+        //menu.add((int groupId, int itemId, int order, charsequence title) .setIcon(drawable ID)
+
+    }
+
+    @Override
+    public void onOptionsMenuClosed(Menu menu) {
+        /**
+         * 每次菜单被关闭时调用. （菜单被关闭有三种情形，menu按钮被再次点击、back按钮被点击或者用户选择了某一个菜单项） TODO
+         * Auto-generated method stub
+         */
+        super.onOptionsMenuClosed(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        Toast.makeText(this, item.getOrder()+","+item.getTitle(), Toast.LENGTH_LONG).show();
+        return true;
+    }
+
+
 
 }
