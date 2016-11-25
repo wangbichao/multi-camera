@@ -96,14 +96,14 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
  *
  * @see SystemUiHider
  */
-public class MultiCameraActivity extends Activity implements OnCheckedChangeListener, FragmentCompat.OnRequestPermissionsResultCallback{
+public class MultiCameraActivity extends Activity implements OnClickListener, FragmentCompat.OnRequestPermissionsResultCallback{
 	public final String TAG = MultiCameraActivity.class.getSimpleName();
 	/**
 	 * Whether or not the system UI should be auto-hidden after
 	 * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
 	 */
 	//private static final boolean AUTO_HIDE = true;
-    private static int MAX_CAMERA = 6;
+    private static int MAX_CAMERA = 8;
 
 	/**
 	 * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
@@ -132,15 +132,15 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
      */
     private Semaphore mCameraOpenCloseLock = new Semaphore(1);
 	private boolean[] CAMERA_INITED;
-//	private Button[] mCameraTestButton;
+	private Button[] mCameraTestButton;
 	private SurfaceView[] mSurfaceView;
 	private Camera[] mCamera;
     private MultiOpenCameraThread[] mOpenThread;
     private MultiCloseCameraThread[] mCloseThread;
 	private Map<Integer, Runnable> allowablePermissionRunnables = new HashMap<>();
 	private Map<Integer, Runnable> disallowablePermissionRunnables = new HashMap<>();
-    private ToggleButton mtogglebutton1;
-    private ToggleButton mtogglebutton2;
+//    private ToggleButton mtogglebutton1;
+//    private ToggleButton mtogglebutton2;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -164,7 +164,7 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
 		final View contentView = findViewById(R.id.fullscreen_content);
 
 //        CAMERA_INITED = new boolean[MAX_CAMERA];
-//    	mCameraTestButton = new Button[MAX_CAMERA];
+    	mCameraTestButton = new Button[MAX_CAMERA];
     	mSurfaceView = new SurfaceView[MAX_CAMERA];
     	mCamera = new Camera[MAX_CAMERA];
         mOpenThread = new MultiOpenCameraThread[MAX_CAMERA];
@@ -180,24 +180,28 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
 		mSurfaceView[3] = (SurfaceView)findViewById(R.id.surfaceView4);
 		mSurfaceView[4] = (SurfaceView)findViewById(R.id.surfaceView5);
 		mSurfaceView[5] = (SurfaceView)findViewById(R.id.surfaceView6);
+		mSurfaceView[6] = (SurfaceView)findViewById(R.id.surfaceView7);
+		mSurfaceView[7] = (SurfaceView)findViewById(R.id.surfaceView8);
 
-//		mCameraTestButton[0] = (Button)findViewById(R.id.button1);
-//		mCameraTestButton[1] = (Button)findViewById(R.id.button2);
-//		mCameraTestButton[2] = (Button)findViewById(R.id.button3);
-//		mCameraTestButton[3] = (Button)findViewById(R.id.button4);
-//		mCameraTestButton[4] = (Button)findViewById(R.id.button5);
-//		mCameraTestButton[5] = (Button)findViewById(R.id.button6);
+		mCameraTestButton[0] = (Button)findViewById(R.id.button1);
+		mCameraTestButton[1] = (Button)findViewById(R.id.button2);
+		mCameraTestButton[2] = (Button)findViewById(R.id.button3);
+		mCameraTestButton[3] = (Button)findViewById(R.id.button4);
+		mCameraTestButton[4] = (Button)findViewById(R.id.button5);
+		mCameraTestButton[5] = (Button)findViewById(R.id.button6);
+		mCameraTestButton[6] = (Button)findViewById(R.id.button7);
+		mCameraTestButton[7] = (Button)findViewById(R.id.button8);
 
-//        for(int i=0; i<MAX_CAMERA; i++) {
-//    		mCameraTestButton[i].setOnClickListener(this);
-//        }
+        for(int i=0; i<MAX_CAMERA; i++) {
+    		mCameraTestButton[i].setOnClickListener(this);
+        }
 
 
         //init togglebutton
-        mtogglebutton1 = (ToggleButton) findViewById(R.id.togglebutton1);
-        mtogglebutton2 = (ToggleButton) findViewById(R.id.togglebutton2);
-        mtogglebutton1.setOnCheckedChangeListener(this);
-        mtogglebutton2.setOnCheckedChangeListener(this);
+//        mtogglebutton1 = (ToggleButton) findViewById(R.id.togglebutton1);
+//        mtogglebutton2 = (ToggleButton) findViewById(R.id.togglebutton2);
+//        mtogglebutton1.setOnCheckedChangeListener(this);
+//        mtogglebutton2.setOnCheckedChangeListener(this);
 
         for(int i=0; i<MAX_CAMERA; i++) {
                mOpenThread[i] = new MultiOpenCameraThread(i);
@@ -445,9 +449,9 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
 	    Log.d(TAG,new Exception().getStackTrace()[0].getMethodName());
 		super.onResume();
         // open all camera
-        for(int i=0; i<Camera_num; i++){
-            mOpenThread[i].start();
-        }
+//        for(int i=0; i<Camera_num; i++){
+//            mOpenThread[i].start();
+//        }
 	}
 
 	@Override
@@ -471,7 +475,7 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
 		super.onDestroy();
     }
 
-
+/*
     @Override  
     //set togglebutton listener
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -512,9 +516,9 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
     			break;
 		}
     }  
+*/
 
 
-/*    
 	@Override
 	public void onClick(View v) {
 	    Log.d(TAG,new Exception().getStackTrace()[0].getMethodName());
@@ -544,21 +548,24 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                 mOpenThread[5].start();
 		}
 		break;
+		case R.id.button7:{
+                mOpenThread[6].start();
+		}
+		break;
+		case R.id.button8:{
+                mOpenThread[7].start();
+		}
+		break;
 		default:
 			break;
 		}
     }
-*/
 
 
+/*
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        /**
-         * 此方法用于初始化菜单，其中menu参数就是即将要显示的Menu实例。 返回true则显示该menu,false 则不显示;
-         * (只会在第一次初始化菜单时调用) Inflate the menu; this adds items to the action bar
-         * if it is present.
-         */
 
         menu.add(Menu.NONE, Menu.NONE, 1, "menu1");
         menu.add(Menu.NONE, Menu.NONE, 2, "menu2");
@@ -572,11 +579,6 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        /**
-         * 在onCreateOptionsMenu执行后，菜单被显示前调用；如果菜单已经被创建，则在菜单显示前被调用。 同样的，
-         * 返回true则显示该menu,false 则不显示; （可以通过此方法动态的改变菜单的状态，比如加载不同的菜单等） TODO
-         * Auto-generated method stub
-         */
         return super.onPrepareOptionsMenu(menu);
         //menu.add((int groupId, int itemId, int order, charsequence title) .setIcon(drawable ID)
 
@@ -584,10 +586,6 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
 
     @Override
     public void onOptionsMenuClosed(Menu menu) {
-        /**
-         * 每次菜单被关闭时调用. （菜单被关闭有三种情形，menu按钮被再次点击、back按钮被点击或者用户选择了某一个菜单项） TODO
-         * Auto-generated method stub
-         */
         super.onOptionsMenuClosed(menu);
     }
 
@@ -596,7 +594,7 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
         Toast.makeText(this, item.getOrder()+","+item.getTitle(), Toast.LENGTH_LONG).show();
         return true;
     }
-
+*/
 
 
 }
