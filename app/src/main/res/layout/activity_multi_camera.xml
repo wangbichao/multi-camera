@@ -52,7 +52,7 @@
             android:orientation="vertical" >
 
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:orientation="horizontal"
@@ -60,30 +60,39 @@
 
                 <SurfaceView
                     android:id="@+id/surfaceView1"
-                    android:layout_width="0dp"
+                    android:layout_marginLeft="175dp"
+                    android:layout_marginRight="175dp"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1" />
 
-                <SurfaceView
-                    android:id="@+id/surfaceView2"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1" />
+                <ToggleButton
+                    android:id="@+id/togglebutton1"
+                    android:layout_marginTop="150dp"
+                    android:layout_marginLeft="600dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textOn="ON"
+                    android:textOff="OFF"
+                    android:checked="true"/>
 
                 <Button
                     android:id="@+id/button1"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.3"
-                    android:text="camera0" />
+                    android:layout_marginTop="50dp"
+                    android:layout_marginLeft="600dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Format Menu" />
+
                 <Button
                     android:id="@+id/button2"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.3"
-                    android:text="camera1" />
+                    android:layout_marginTop="100dp"
+                    android:layout_marginLeft="600dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Size Menu" />
 
-            </LinearLayout>
+            </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -102,18 +111,6 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1" />
-                <Button
-                    android:id="@+id/button3"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.3"
-                    android:text="camera2" />
-                <Button
-                    android:id="@+id/button4"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.3"
-                    android:text="camera3" />
 
             </LinearLayout>
 
@@ -134,52 +131,34 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1" />
-                <Button
-                    android:id="@+id/button5"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.3"
-                    android:text="camera4" />
-                <Button
-                    android:id="@+id/button6"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.3"
-                    android:text="camera5" />
 
             </LinearLayout>
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:orientation="horizontal" >
 
                 <SurfaceView
-                    android:id="@+id/surfaceView7"
-                    android:layout_width="0dp"
+                    android:id="@+id/surfaceView2"
+                    android:layout_marginLeft="175dp"
+                    android:layout_marginRight="175dp"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1" />
 
-                <SurfaceView
-                    android:id="@+id/surfaceView8"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1" />
-                <Button
-                    android:id="@+id/button7"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.3"
-                    android:text="camera6" />
-                <Button
-                    android:id="@+id/button8"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.3"
-                    android:text="camera7" />
+                <ToggleButton
+                    android:id="@+id/togglebutton2"
+                    android:layout_marginTop="150dp"
+                    android:layout_marginLeft="600dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textOn="ON"
+                    android:textOff="OFF"
+                    android:checked="true"/>
 
-            </LinearLayout>
+            </RelativeLayout>
             
         </LinearLayout>
 
