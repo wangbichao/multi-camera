@@ -5,10 +5,6 @@ import java.io.IOException;
 import android.app.Activity;
 import android.graphics.ImageFormat;
 import com.example.tim.multicamera.R;
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.appindexing.Thing;
-import com.google.android.gms.common.api.GoogleApiClient;
 //import com.example.tim.multicamera.util.SystemUiHider;
 
 import android.net.Uri;
@@ -148,12 +144,7 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
     private Map<Integer, Runnable> disallowablePermissionRunnables = new HashMap<>();
     private ToggleButton mtogglebutton1;
     private ToggleButton mtogglebutton2;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient client;
-
+    private PopupMenu pop ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, new Exception().getStackTrace()[0].getMethodName());
@@ -204,6 +195,8 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
     		mCameraTestButton[i].setOnClickListener(this);
         }
 
+        pop = new PopupMenu(MultiCameraActivity.this, mCameraTestButton[0]);
+        pop.getMenuInflater().inflate(R.menu.popup_menu, pop.getMenu());
 
         //init togglebutton
         mtogglebutton1 = (ToggleButton) findViewById(R.id.togglebutton1);
@@ -284,9 +277,6 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
         // while interacting with the UI.
         //findViewById(R.id.dummy_button).setOnTouchListener(
         //		mDelayHideTouchListener);
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     //permission strat
@@ -327,22 +317,6 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
         }
     }
 
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    public Action getIndexApiAction() {
-        Thing object = new Thing.Builder()
-                .setName("MultiCamera Page") // TODO: Define a title for the content shown.
-                // TODO: Make sure this auto-generated URL is correct.
-                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
-                .build();
-        return new Action.Builder(Action.TYPE_VIEW)
-                .setObject(object)
-                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
-                .build();
-    }
-
     public class MultiOpenCameraThread extends Thread {
 
         private int camera_id;
@@ -355,7 +329,7 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
             Log.d(TAG, "open camera" + camera_id + " ---Number of  Cameras is " + Camera_num);
 
             if (Camera_num <= camera_id) {
-                Log.d(TAG, "Not found camera camera_id");
+                Log.d(TAG, "Not found camera :" + camera_id);
                 return;
             }
             if (null == mCamera[camera_id]) {
@@ -396,7 +370,7 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
             Log.d(TAG, "close camera" + camera_id + " ---Number of  Cameras is " + Camera_num);
 
             if (Camera_num <= camera_id) {
-                Log.d(TAG, "Not found camera camera_id");
+                Log.d(TAG, "Not found camera :" + camera_id);
                 return;
             }
             if (null != mCamera[camera_id]) {
@@ -468,12 +442,7 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
     @Override
     protected void onStart() {
         Log.d(TAG, new Exception().getStackTrace()[0].getMethodName());
-        super.onStart();// ATTENTION: This was auto-generated to implement the App Indexing API.
-// See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        AppIndex.AppIndexApi.start(client, getIndexApiAction());
+        super.onStart();
     }
 
     @Override
@@ -498,12 +467,7 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
     @Override
     protected void onStop() {
         Log.d(TAG, new Exception().getStackTrace()[0].getMethodName());
-        super.onStop();// ATTENTION: This was auto-generated to implement the App Indexing API.
-// See https://g.co/AppIndexing/AndroidStudio for more information.
-        AppIndex.AppIndexApi.end(client, getIndexApiAction());
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.disconnect();
+        super.onStop();
     }
 
     @Override
@@ -561,8 +525,6 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
         switch (v.getId()) {
             case R.id.button1: {
                 Log.d(TAG,"button1");
-                PopupMenu pop = new PopupMenu(MultiCameraActivity.this, v);
-                pop.getMenuInflater().inflate(R.menu.popup_menu, pop.getMenu());
                 pop.show();
    //             pop.setOnMenuItemClickListener(MultiCameraActivity.this);
             }
