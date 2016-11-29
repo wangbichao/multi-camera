@@ -14,7 +14,7 @@ import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.widget.PopupMenu;
+import android.widget.PopupMenu;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -92,6 +92,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.graphics.ImageFormat;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -144,7 +145,8 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
     private Map<Integer, Runnable> disallowablePermissionRunnables = new HashMap<>();
     private ToggleButton mtogglebutton1;
     private ToggleButton mtogglebutton2;
-    private PopupMenu pop ;
+    private PopupMenu pop;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, new Exception().getStackTrace()[0].getMethodName());
@@ -167,7 +169,7 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
         final View contentView = findViewById(R.id.fullscreen_content);
 
 //        CAMERA_INITED = new boolean[MAX_CAMERA];
-    	mCameraTestButton = new Button[2];
+        mCameraTestButton = new Button[2];
         mSurfaceView = new SurfaceView[MAX_CAMERA];
         mCamera = new Camera[MAX_CAMERA];
         mOpenThread = new MultiOpenCameraThread[MAX_CAMERA];
@@ -184,19 +186,16 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
         mSurfaceView[4] = (SurfaceView) findViewById(R.id.surfaceView5);
         mSurfaceView[5] = (SurfaceView) findViewById(R.id.surfaceView6);
 
-		mCameraTestButton[0] = (Button)findViewById(R.id.button1);
-		mCameraTestButton[1] = (Button)findViewById(R.id.button2);
+        mCameraTestButton[0] = (Button) findViewById(R.id.button1);
+        mCameraTestButton[1] = (Button) findViewById(R.id.button2);
 //		mCameraTestButton[2] = (Button)findViewById(R.id.button3);
 //		mCameraTestButton[3] = (Button)findViewById(R.id.button4);
 //		mCameraTestButton[4] = (Button)findViewById(R.id.button5);
 //		mCameraTestButton[5] = (Button)findViewById(R.id.button6);
 
-        for(int i=0; i<2; i++) {
-    		mCameraTestButton[i].setOnClickListener(this);
+        for (int i = 0; i < 2; i++) {
+            mCameraTestButton[i].setOnClickListener(this);
         }
-
-        pop = new PopupMenu(MultiCameraActivity.this, mCameraTestButton[0]);
-        pop.getMenuInflater().inflate(R.menu.popup_menu, pop.getMenu());
 
         //init togglebutton
         mtogglebutton1 = (ToggleButton) findViewById(R.id.togglebutton1);
@@ -214,7 +213,6 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
 
         Camera_num = Camera.getNumberOfCameras();
         Log.d(TAG, " Number of  Cameras is " + Camera_num);
-
         //mSurfaceView.setOnClickListener((OnClickListener) this);
 /*
         // Set up an instance of SystemUiHider to control the system UI for
@@ -317,6 +315,24 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
         }
     }
 
+     /**
+      * @see android.graphics.ImageFormat
+      */
+        public static String getImageFormatString(int format) {
+            switch (format) {
+                case ImageFormat.JPEG: return "JPEG";
+                case ImageFormat.NV16: return "NV16";
+                case ImageFormat.NV21: return "NV21";
+                case ImageFormat.RGB_565: return "RGB_565";
+                case ImageFormat.YUY2: return "YUY2";
+                case ImageFormat.YV12: return "YV12";
+
+                case ImageFormat.UNKNOWN:
+            default:
+             return "UNKNOWN";
+            }
+        }
+
     public class MultiOpenCameraThread extends Thread {
 
         private int camera_id;
@@ -339,6 +355,20 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                     }
                     Log.d(TAG, "new thread open camera is " + camera_id);
                     mCamera[camera_id] = Camera.open(camera_id);
+                    Camera.Parameters mparameter = mCamera[camera_id].getParameters();
+
+                    List<Camera.Size> PreSupSizeList = mparameter.getSupportedPreviewSizes();
+                    for(int num=0; num<PreSupSizeList.size(); num++) {
+                        Camera.Size PreSupSize =  PreSupSizeList.get(num);
+                        Log.d(TAG, "PreviewSizes = " +PreSupSize.width+ "X" + PreSupSize.height);
+                    }
+
+                    List<Integer> PreSupFormatList = mparameter.getSupportedPreviewFormats();
+                    ArrayList<String> PreSupFormat = new ArrayList<String>();
+                    for (Integer item : PreSupFormatList) {
+                        Log.d(TAG, "PreSupFormat = " + getImageFormatString(item.intValue()));
+                    }
+
                 } catch (InterruptedException e) {
                     Log.d(TAG, "Interrupted while trying to lock camera opening.", e);
                 }
@@ -410,7 +440,7 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
      * while interacting with activity UI.
      */
 /*
-	View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
+    View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
 		@Override
 		public boolean onTouch(View view, MotionEvent motionEvent) {
 			if (AUTO_HIDE) {
@@ -524,13 +554,18 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
 
         switch (v.getId()) {
             case R.id.button1: {
-                Log.d(TAG,"button1");
+                Log.d(TAG, "button1");
+                PopupMenu pop = new PopupMenu(this, findViewById(R.id.button1));
+                Menu menu = pop.getMenu();
+                menu.add(Menu.NONE, Menu.FIRST + 0, 0, "复制");
+                menu.add(Menu.NONE, Menu.FIRST + 1, 1, "粘贴");
+                //pop.getMenuInflater().inflate(R.menu.popup_menu, pop.getMenu());
                 pop.show();
-   //             pop.setOnMenuItemClickListener(MultiCameraActivity.this);
+                pop.setOnMenuItemClickListener(MultiCameraActivity.this);
             }
             break;
             case R.id.button2: {
-                Log.d(TAG,"button2");
+                Log.d(TAG, "button2");
             }
             break;
 /*
@@ -560,11 +595,13 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
     public boolean onMenuItemClick(MenuItem arg0) {
         // TODO Auto-generated method stub
         switch (arg0.getItemId()) {
-            case R.id.open:
-                Toast.makeText(this, "movies", 1000).show();
+            case Menu.FIRST + 0:
+                Toast.makeText(this, "复制",
+                        Toast.LENGTH_LONG).show();
                 break;
-            case R.id.close:
-                Toast.makeText(this, "music", 1000).show();
+            case Menu.FIRST + 1:
+                Toast.makeText(this, "粘贴",
+                        Toast.LENGTH_LONG).show();
                 break;
         }
         return false;
