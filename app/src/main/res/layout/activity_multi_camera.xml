@@ -82,7 +82,7 @@
                     android:layout_marginLeft="600dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Format Menu" />
+                    android:text="Size Menu" />
 
                 <Button
                     android:id="@+id/button2"
@@ -90,7 +90,7 @@
                     android:layout_marginLeft="600dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Size Menu" />
+                    android:text="Format Menu" />
 
             </RelativeLayout>
 
@@ -157,6 +157,22 @@
                     android:textOn="ON"
                     android:textOff="OFF"
                     android:checked="true"/>
+
+                <Button
+                    android:id="@+id/button3"
+                    android:layout_marginTop="50dp"
+                    android:layout_marginLeft="600dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Size Menu" />
+
+                <Button
+                    android:id="@+id/button4"
+                    android:layout_marginTop="100dp"
+                    android:layout_marginLeft="600dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Format Menu" />
 
             </RelativeLayout>
             

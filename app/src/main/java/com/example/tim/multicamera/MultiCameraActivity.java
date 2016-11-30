@@ -146,6 +146,16 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
     private ToggleButton mtogglebutton1;
     private ToggleButton mtogglebutton2;
     private PopupMenu pop;
+    private Camera.Parameters mParameters1;
+    private Camera.Parameters mParameters2;
+    private List<Camera.Size> PreSupSizeList1;
+    private List<Camera.Size> PreSupSizeList2;
+    private List<Integer> PreSupFormatList1;
+    private List<Integer> PreSupFormatList2;
+    private Camera.Size PreSupSize1;
+    private Camera.Size PreSupSize2;
+    private Integer PreSupFormat1;
+    private Integer PreSupFormat2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -169,7 +179,7 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
         final View contentView = findViewById(R.id.fullscreen_content);
 
 //        CAMERA_INITED = new boolean[MAX_CAMERA];
-        mCameraTestButton = new Button[2];
+        mCameraTestButton = new Button[4];
         mSurfaceView = new SurfaceView[MAX_CAMERA];
         mCamera = new Camera[MAX_CAMERA];
         mOpenThread = new MultiOpenCameraThread[MAX_CAMERA];
@@ -188,12 +198,12 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
 
         mCameraTestButton[0] = (Button) findViewById(R.id.button1);
         mCameraTestButton[1] = (Button) findViewById(R.id.button2);
-//		mCameraTestButton[2] = (Button)findViewById(R.id.button3);
-//		mCameraTestButton[3] = (Button)findViewById(R.id.button4);
+		mCameraTestButton[2] = (Button)findViewById(R.id.button3);
+		mCameraTestButton[3] = (Button)findViewById(R.id.button4);
 //		mCameraTestButton[4] = (Button)findViewById(R.id.button5);
 //		mCameraTestButton[5] = (Button)findViewById(R.id.button6);
 
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 4; i++) {
             mCameraTestButton[i].setOnClickListener(this);
         }
 
@@ -213,6 +223,7 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
 
         Camera_num = Camera.getNumberOfCameras();
         Log.d(TAG, " Number of  Cameras is " + Camera_num);
+        Systemproperties.set
         //mSurfaceView.setOnClickListener((OnClickListener) this);
 /*
         // Set up an instance of SystemUiHider to control the system UI for
@@ -355,25 +366,62 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                     }
                     Log.d(TAG, "new thread open camera is " + camera_id);
                     mCamera[camera_id] = Camera.open(camera_id);
-                    Camera.Parameters mparameter = mCamera[camera_id].getParameters();
 
-                    List<Camera.Size> PreSupSizeList = mparameter.getSupportedPreviewSizes();
-                    for(int num=0; num<PreSupSizeList.size(); num++) {
-                        Camera.Size PreSupSize =  PreSupSizeList.get(num);
-                        Log.d(TAG, "PreviewSizes = " +PreSupSize.width+ "X" + PreSupSize.height);
+                    if ((camera_id == 0)||(camera_id == 1)) {
+                        mParameters1 = mCamera[camera_id].getParameters();
+                        PreSupSizeList1 = mParameters1.getSupportedPreviewSizes();
+                        if(PreSupSize1 == null){ 
+                            Log.d(TAG, "Have no preview size parameters and use the default parameters.");
+                            PreSupSize1 =  PreSupSizeList1.get(0);
+                        }
+//                       for(int num=0; num<PreSupSizeList1.size(); num++) {
+//                           PreSupSize1 =  PreSupSizeList1.get(num);
+//                           Log.d(TAG, "PreviewSizes = " +PreSupSize1.width+ "X" + PreSupSize1.height);
+//                       }
+                        PreSupFormatList1 = mParameters1.getSupportedPreviewFormats();
+                        if(PreSupFormat1 == null){
+                            Log.d(TAG, "Have no preview format parameters and use the default parameters.");
+                            PreSupFormat1 = PreSupFormatList1.get(0);
+                        }
+//                        for (int num=0; num<PreSupFormatList1.size(); num++) {
+//                            PreSupFormat1 = PreSupFormatList1.get(num);
+//                            Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat1.intValue()));
+//                        }
                     }
-
-                    List<Integer> PreSupFormatList = mparameter.getSupportedPreviewFormats();
-                    ArrayList<String> PreSupFormat = new ArrayList<String>();
-                    for (Integer item : PreSupFormatList) {
-                        Log.d(TAG, "PreSupFormat = " + getImageFormatString(item.intValue()));
+                    if ((camera_id == 2)||(camera_id == 3)||(camera_id == 4)||(camera_id == 5)) {
+                        mParameters2 = mCamera[camera_id].getParameters();
+                        PreSupSizeList2 = mParameters2.getSupportedPreviewSizes();
+                        if(PreSupSize2 == null){ 
+                            Log.d(TAG, "Have no preview size parameters and use the default parameters.");
+                            PreSupSize2 =  PreSupSizeList2.get(0);
+                        }
+//                        for(int num=0; num<PreSupSizeList2.size(); num++) {
+//                            PreSupSize2 =  PreSupSizeList2.get(num);
+//                            Log.d(TAG, "PreviewSizes = " +PreSupSize2.width+ "X" + PreSupSize2.height);
+//                        }
+                        PreSupFormatList2 = mParameters2.getSupportedPreviewFormats();
+                        if(PreSupFormat2 == null){
+                            Log.d(TAG, "Have no preview format parameters and use the default parameters.");
+                            PreSupFormat2 = PreSupFormatList2.get(0);
+                        }
+//                        for (int num=0; num<PreSupFormatList2.size(); num++) {
+//                            PreSupFormat2 = PreSupFormatList2.get(num);
+//                            Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat2.intValue()));
+//                        }
                     }
-
                 } catch (InterruptedException e) {
                     Log.d(TAG, "Interrupted while trying to lock camera opening.", e);
                 }
                 try {
                     mCamera[camera_id].setPreviewDisplay(mSurfaceView[camera_id].getHolder());
+                    if ((camera_id == 0)||(camera_id == 1)) {
+                        mParameters1.setPreviewSize(PreSupSize1.width,PreSupSize1.height);
+                        mParameters1.setPreviewFormat(Integer.valueOf(PreSupFormat1.intValue()));
+                    }
+                    if ((camera_id == 2)||(camera_id == 3)||(camera_id == 4)||(camera_id == 5)) {
+                        mParameters2.setPreviewSize(PreSupSize2.width,PreSupSize1.height);
+                        mParameters2.setPreviewFormat(Integer.valueOf(PreSupFormat2.intValue()));
+                    }
                     mCamera[camera_id].startPreview();
                 } catch (IOException e) {
                     mCamera[camera_id].release();
@@ -555,28 +603,66 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
         switch (v.getId()) {
             case R.id.button1: {
                 Log.d(TAG, "button1");
-                PopupMenu pop = new PopupMenu(this, findViewById(R.id.button1));
-                Menu menu = pop.getMenu();
-                menu.add(Menu.NONE, Menu.FIRST + 0, 0, "复制");
-                menu.add(Menu.NONE, Menu.FIRST + 1, 1, "粘贴");
+                PopupMenu pop1 = new PopupMenu(this, findViewById(R.id.button1));
+                Menu menu1 = pop1.getMenu();
+                if (PreSupSizeList1 == null)
+                    break;
+                for(int i=0; i<PreSupSizeList1.size(); i++) {
+                    PreSupSize1 =  PreSupSizeList1.get(i);
+                    menu1.add(0, Menu.FIRST + i, i, PreSupSize1.width+"X"+PreSupSize1.height);
+                }
                 //pop.getMenuInflater().inflate(R.menu.popup_menu, pop.getMenu());
-                pop.show();
-                pop.setOnMenuItemClickListener(MultiCameraActivity.this);
+                pop1.show();
+                pop1.setOnMenuItemClickListener(MultiCameraActivity.this);
             }
             break;
             case R.id.button2: {
                 Log.d(TAG, "button2");
+                PopupMenu pop2 = new PopupMenu(this, findViewById(R.id.button2));
+                Menu menu2 = pop2.getMenu();
+                if (PreSupFormatList1 == null)
+                    break;
+                for (int i=0; i<PreSupFormatList1.size(); i++) {
+                    PreSupFormat1 = PreSupFormatList1.get(i);
+                    menu2.add(1, Menu.FIRST + i, i, getImageFormatString(PreSupFormat1.intValue()));
+                }
+                //pop.getMenuInflater().inflate(R.menu.popup_menu, pop.getMenu());
+                pop2.show();
+                pop2.setOnMenuItemClickListener(MultiCameraActivity.this);
             }
             break;
-/*
+
 		case R.id.button3:{
-                mOpenThread[2].start();
+                Log.d(TAG, "button3");
+                PopupMenu pop3 = new PopupMenu(this, findViewById(R.id.button3));
+                Menu menu3 = pop3.getMenu();
+                if (PreSupSizeList2 == null)
+                    break;
+                for(int i=0; i<PreSupSizeList2.size(); i++) {
+                    PreSupSize2 =  PreSupSizeList2.get(i);
+                    menu3.add(2, Menu.FIRST + i, i, PreSupSize2.width+"X"+PreSupSize2.height);
+                }
+                //pop.getMenuInflater().inflate(R.menu.popup_menu, pop.getMenu());
+                pop3.show();
+                pop3.setOnMenuItemClickListener(MultiCameraActivity.this);
 		}
 		break;
 		case R.id.button4:{
-                mOpenThread[3].start();
+                Log.d(TAG, "button4");
+                PopupMenu pop4 = new PopupMenu(this, findViewById(R.id.button4));
+                Menu menu4 = pop4.getMenu();
+                if (PreSupFormatList2 == null)
+                    break;
+                for (int i=0; i<PreSupFormatList2.size(); i++) {
+                    PreSupFormat1 = PreSupFormatList2.get(i);
+                    menu4.add(3, Menu.FIRST + i, i, getImageFormatString(PreSupFormat2.intValue()));
+                }
+                //pop.getMenuInflater().inflate(R.menu.popup_menu, pop.getMenu());
+                pop4.show();
+                pop4.setOnMenuItemClickListener(MultiCameraActivity.this);
 		}
 		break;
+/*
 		case R.id.button5:{
                 mOpenThread[4].start();
 		}
@@ -594,16 +680,34 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
 
     public boolean onMenuItemClick(MenuItem arg0) {
         // TODO Auto-generated method stub
-        switch (arg0.getItemId()) {
-            case Menu.FIRST + 0:
-                Toast.makeText(this, "复制",
-                        Toast.LENGTH_LONG).show();
+        switch (arg0.getGroupId()){
+            case 0:
+                Log.d(TAG, "PreviewSizes id = " +(arg0.getItemId()-1) + "PreSupSizeList1 = " + PreSupSizeList1.size());
+                PreSupSize1 =  PreSupSizeList1.get(arg0.getItemId()-1);
+                Log.d(TAG, "PreviewSizes = " +PreSupSize1.width+ "X" + PreSupSize1.height);
+                Toast.makeText(this, "set camera 0/1 PreviewSizes = "+PreSupSize1.width+"X"+PreSupSize1.height,Toast.LENGTH_LONG).show();
                 break;
-            case Menu.FIRST + 1:
-                Toast.makeText(this, "粘贴",
-                        Toast.LENGTH_LONG).show();
+            case 1:
+                Log.d(TAG, "PreSupFormat id = " +(arg0.getItemId()-1) + "PreSupFormatList1 = " + PreSupSizeList1.size());
+                PreSupFormat1 = PreSupFormatList1.get(arg0.getItemId()-1);
+                Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat1.intValue()));
+                Toast.makeText(this, "set camera 0/1 PreviewFormat = "+getImageFormatString(PreSupFormat1.intValue()),Toast.LENGTH_LONG).show();
                 break;
+            case 2:
+                Log.d(TAG, "PreviewSizes id = " +(arg0.getItemId()-1) + "PreSupSizeList2 = " + PreSupSizeList2.size());
+                PreSupSize2 =  PreSupSizeList2.get(arg0.getItemId()-1);
+                Log.d(TAG, "PreviewSizes = " +PreSupSize2.width+ "X" + PreSupSize2.height);
+                Toast.makeText(this, "set camera 2/3/4/5 PreviewSizes = "+PreSupSize2.width+"X"+PreSupSize2.height,Toast.LENGTH_LONG).show();
+                break;
+            case 3:
+                Log.d(TAG, "PreSupFormat id = " +(arg0.getItemId()-1) + "PreSupFormatList2 = " + PreSupSizeList2.size());
+                PreSupFormat2 = PreSupFormatList2.get(arg0.getItemId()-1);
+                Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat2.intValue()));
+                Toast.makeText(this, "set camera 2/3/4/5 PreviewFormat = "+getImageFormatString(PreSupFormat2.intValue()),Toast.LENGTH_LONG).show();
+                break;
+
         }
+
         return false;
     }
 
