@@ -1,5 +1,7 @@
 package com.example.tim.multicamera;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 
 import android.app.Activity;
@@ -77,6 +79,8 @@ import android.widget.ToggleButton;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -220,11 +224,22 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
         for (int i = 0; i < MAX_CAMERA; i++) {
             mCloseThread[i] = new MultiCloseCameraThread(i);
         }
-
         Camera_num = Camera.getNumberOfCameras();
         Log.d(TAG, " Number of  Cameras is " + Camera_num);
-        Systemproperties.set
-        //mSurfaceView.setOnClickListener((OnClickListener) this);
+
+        /*
+        try {
+            //execCommand("adb root");
+            //execCommand("adb remount");
+            //execCommand("adb shell setprop enable.multi.camera 1");
+        } catch (IOException e) {
+        // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        */
+//        execShell("setprop enable.multi.camera 1");
+
+//mSurfaceView.setOnClickListener((OnClickListener) this);
 /*
         // Set up an instance of SystemUiHider to control the system UI for
 		// this activity.
@@ -287,8 +302,50 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
         //findViewById(R.id.dummy_button).setOnTouchListener(
         //		mDelayHideTouchListener);
     }
+/*
+    public void execShell(String cmd){
+        try{
+            Process p = Runtime.getRuntime().exec("su");
+            OutputStream outputStream = p.getOutputStream();
+            DataOutputStream dataOutputStream=new DataOutputStream(outputStream);
+            dataOutputStream.writeBytes(cmd);
+            dataOutputStream.flush();
+            dataOutputStream.close();
+            outputStream.close();
+        }
+        catch(Throwable t)
+        {
+            t.printStackTrace();
+        }
+    }
 
-    //permission strat
+    public void execCommand(String command) throws IOException {
+        Runtime runtime = Runtime.getRuntime();
+        Process proc = runtime.exec(command);
+        try {
+            if (proc.waitFor() != 0) {
+                System.err.println("exit value = " + proc.exitValue());
+            }
+            BufferedReader in = new BufferedReader(new InputStreamReader(
+                    proc.getInputStream()));
+            StringBuffer stringBuffer = new StringBuffer();
+            String line = null;
+            while ((line = in.readLine()) != null) {
+                stringBuffer.append(line+" ");
+            }
+            System.out.println(stringBuffer.toString());
+            Log.d(TAG,stringBuffer.toString());
+        } catch (InterruptedException e) {
+            System.err.println(e);
+        }finally{
+            try {
+                proc.destroy();
+            } catch (Exception e2) {
+            }
+        }
+    }
+*/
+//permission strat
     protected void requestPermission(int id, String permission, Runnable allowableRunnable, Runnable disallowableRunnable) {
         if (allowableRunnable == null) {
             throw new IllegalArgumentException("allowableRunnable == null");
@@ -528,9 +585,9 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
         Log.d(TAG, new Exception().getStackTrace()[0].getMethodName());
         super.onResume();
         // open all camera
-        for (int i = 0; i < Camera_num; i++) {
-            mOpenThread[i].start();
-        }
+        //for (int i = 0; i < Camera_num; i++) {
+        //    mOpenThread[i].start();
+        //}
     }
 
     @Override
