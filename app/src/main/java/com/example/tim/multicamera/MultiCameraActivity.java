@@ -5,10 +5,14 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import android.app.Activity;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ImageFormat;
 import com.example.tim.multicamera.R;
 //import com.example.tim.multicamera.util.SystemUiHider;
 
+import android.graphics.PixelFormat;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -162,8 +166,16 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
     private Integer PreSupFormat2;
     private PopupMenu pop1;
     private PopupMenu pop2;
-    private int width;
-    private int height;
+    private PopupMenu pop3;
+    private PopupMenu pop4;
+    private PopupMenu pop5;
+    private PopupMenu pop6;
+    private int width0;
+    private int height0;
+    private int width1;
+    private int height1;
+    private int CameraHalField0;
+    private int CameraHalField1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -187,7 +199,7 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
         final View contentView = findViewById(R.id.fullscreen_content);
 
 //        CAMERA_INITED = new boolean[MAX_CAMERA];
-        mCameraTestButton = new Button[4];
+        mCameraTestButton = new Button[MAX_CAMERA];
         mSurfaceView = new SurfaceView[MAX_CAMERA];
         mCamera = new Camera[MAX_CAMERA];
         mOpenThread = new MultiOpenCameraThread[MAX_CAMERA];
@@ -208,10 +220,10 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
         mCameraTestButton[1] = (Button) findViewById(R.id.button2);
 		mCameraTestButton[2] = (Button)findViewById(R.id.button3);
 		mCameraTestButton[3] = (Button)findViewById(R.id.button4);
-//		mCameraTestButton[4] = (Button)findViewById(R.id.button5);
-//		mCameraTestButton[5] = (Button)findViewById(R.id.button6);
+		mCameraTestButton[4] = (Button)findViewById(R.id.button5);
+		mCameraTestButton[5] = (Button)findViewById(R.id.button6);
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < MAX_CAMERA; i++) {
             mCameraTestButton[i].setOnClickListener(this);
         }
 
@@ -428,28 +440,28 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                     Log.d(TAG, "new thread open camera is " + camera_id);
                     mCamera[camera_id] = Camera.open(camera_id);
 
-                    if ((camera_id == 0)||(camera_id == 1)) {
+                    if ((camera_id == 0)) {
                         mParameters1 = mCamera[camera_id].getParameters();
-                        //PreSupSizeList1 = mParameters1.getSupportedPreviewSizes();
+                        PreSupSizeList1 = mParameters1.getSupportedPreviewSizes();
                         //if(PreSupSize1 == null){
                         //    Log.d(TAG, "Have no preview size parameters and use the default parameters.");
                         //    PreSupSize1 =  PreSupSizeList1.get(0);
                         //}
-//                       for(int num=0; num<PreSupSizeList1.size(); num++) {
-//                           PreSupSize1 =  PreSupSizeList1.get(num);
-//                           Log.d(TAG, "PreviewSizes = " +PreSupSize1.width+ "X" + PreSupSize1.height);
-//                       }
-                        //PreSupFormatList1 = mParameters1.getSupportedPreviewFormats();
-                        //if(PreSupFormat1 == null){
-                        //    Log.d(TAG, "Have no preview format parameters and use the default parameters.");
-                        //    PreSupFormat1 = PreSupFormatList1.get(0);
-                        //}
+                       for(int num=0; num<PreSupSizeList1.size(); num++) {
+                           PreSupSize1 =  PreSupSizeList1.get(num);
+                           Log.d(TAG, "PreviewSizes = " +PreSupSize1.width+ "X" + PreSupSize1.height);
+                       }
+//                        PreSupFormatList1 = mParameters1.getSupportedPreviewFormats();
+//                        if(PreSupFormat1 == null){
+//                            Log.d(TAG, "Have no preview format parameters and use the default parameters.");
+//                            PreSupFormat1 = PreSupFormatList1.get(0);
+//                        }
 //                        for (int num=0; num<PreSupFormatList1.size(); num++) {
 //                            PreSupFormat1 = PreSupFormatList1.get(num);
 //                            Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat1.intValue()));
 //                        }
                     }
-                    if ((camera_id == 2)||(camera_id == 3)||(camera_id == 4)||(camera_id == 5)) {
+                    if ((camera_id == 1)) {
                         mParameters2 = mCamera[camera_id].getParameters();
                         //PreSupSizeList2 = mParameters2.getSupportedPreviewSizes();
                         //if(PreSupSize2 == null){
@@ -475,16 +487,34 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                 }
                 try {
                     mCamera[camera_id].setPreviewDisplay(mSurfaceView[camera_id].getHolder());
-                    if ((camera_id == 0)||(camera_id == 1)) {
-                        Log.d(TAG, "camera preview size" + width + "X" + height);
-                        mParameters1.setPreviewSize(width,height);
-                        mParameters1.set("enablemulticamera",1);
+                    if (camera_id == 0) {
+                        if((width0 == 0)||(height0 == 0)){
+                            width0 = 1920;
+                            height0 = 1080;
+                        }
+                        if(PreSupFormat1 == null)
+                            PreSupFormat1 = ImageFormat.NV21;
+                        Log.d(TAG, "camera preview size" + width0 + "X" + height0);
+                        //mParameters1.setPreviewSize(PreSupSize1.width,PreSupSize1.height);
+                        //mSurfaceView[camera_id].getHolder().setFixedSize(width0,height0);
+                        mParameters1.setPreviewSize((int)width0,(int)height0);
+                        mParameters1.set("CameraHalField",CameraHalField0);
                         mParameters1.setPreviewFormat(Integer.valueOf(PreSupFormat1.intValue()));
                         mCamera[camera_id].setParameters(mParameters1);
+
                     }
-                    if ((camera_id == 2)||(camera_id == 3)||(camera_id == 4)||(camera_id == 5)) {
-                        mParameters2.setPreviewSize(PreSupSize2.width,PreSupSize1.height);
+                    if (camera_id == 1) {
+                        if((width1 == 0)||(height1 == 0)){
+                            width1 = 1920;
+                            height1 = 1080;
+                        }
+                        if(PreSupFormat2 == null)
+                            PreSupFormat2 = ImageFormat.NV21;
+                        Log.d(TAG, "camera preview size" + width1 + "X" + height1);
+                        mParameters2.setPreviewSize((int)width1,(int)height1);
+                        mParameters2.set("CameraHalField",CameraHalField1);
                         mParameters2.setPreviewFormat(Integer.valueOf(PreSupFormat2.intValue()));
+                        mCamera[camera_id].setParameters(mParameters2);
                     }
                     mCamera[camera_id].startPreview();
                 } catch (IOException e) {
@@ -625,33 +655,25 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
         switch (buttonView.getId()) {
             case R.id.togglebutton1: {
                 if (isChecked) {
-                    Toast.makeText(MultiCameraActivity.this, "camera 0/1 ON", Toast.LENGTH_LONG).show();
-                    Log.d(TAG, "ToggleButton camera 0/1 open");
+                    Toast.makeText(MultiCameraActivity.this, "camera 0 ON", Toast.LENGTH_LONG).show();
+                    Log.d(TAG, "ToggleButton camera 0 open");
                     mOpenThread[0].start();
-                    mOpenThread[1].start();
                 } else {
-                    Toast.makeText(MultiCameraActivity.this, "camera 0/1 OFF", Toast.LENGTH_LONG).show();
-                    Log.d(TAG, "ToggleButton camera 0/1 close");
+                    Toast.makeText(MultiCameraActivity.this, "camera 0 OFF", Toast.LENGTH_LONG).show();
+                    Log.d(TAG, "ToggleButton camera 0 close");
                     mCloseThread[0].start();
-                    mCloseThread[1].start();
                 }
             }
             break;
             case R.id.togglebutton2: {
                 if (isChecked) {
-                    Toast.makeText(MultiCameraActivity.this, "camera 2/3/4/5 ON", Toast.LENGTH_LONG).show();
-                    Log.d(TAG, "ToggleButton camera 2/3/4/5 open");
-                    mOpenThread[2].start();
-                    mOpenThread[3].start();
-                    mOpenThread[4].start();
-                    mOpenThread[5].start();
-                } else {
-                    Toast.makeText(MultiCameraActivity.this, "camera 2/3/4/5 OFF", Toast.LENGTH_LONG).show();
-                    Log.d(TAG, "ToggleButton camera 2/3/4/5 close");
-                    mCloseThread[2].start();
-                    mCloseThread[3].start();
-                    mCloseThread[4].start();
-                    mCloseThread[5].start();
+                    Toast.makeText(MultiCameraActivity.this, "camera 1 ON", Toast.LENGTH_LONG).show();
+                    Log.d(TAG, "ToggleButton camera 1 open");
+                    mOpenThread[1].start();
+               } else {
+                    Toast.makeText(MultiCameraActivity.this, "camera 1 OFF", Toast.LENGTH_LONG).show();
+                    Log.d(TAG, "ToggleButton camera 1 close");
+                    mCloseThread[1].start();
                 }
             }
             break;
@@ -679,8 +701,12 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                 pop1 = new PopupMenu(this, findViewById(R.id.button1));
                 Menu menu1 = pop1.getMenu();
                 menu1.add(0, Menu.FIRST + 0, 0, "640X480");
-                menu1.add(0, Menu.FIRST + 1, 1, "1280X720");
-                menu1.add(0, Menu.FIRST + 2, 2, "1920X1080");
+                menu1.add(0, Menu.FIRST + 1, 1, "720X480");
+                menu1.add(0, Menu.FIRST + 2, 2, "720X576");
+                menu1.add(0, Menu.FIRST + 3, 3, "800X480");
+                menu1.add(0, Menu.FIRST + 4, 4, "1280X720");
+                menu1.add(0, Menu.FIRST + 5, 5, "1920X1080");
+
                 pop1.show();
                 pop1.setOnMenuItemClickListener(MultiCameraActivity.this);
             }
@@ -708,48 +734,74 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
 
 		case R.id.button3:{
                 Log.d(TAG, "button3");
-                PopupMenu pop3 = new PopupMenu(this, findViewById(R.id.button3));
-                Menu menu3 = pop3.getMenu();
-                if (PreSupSizeList2 == null)
-                    break;
-                for(int i=0; i<PreSupSizeList2.size(); i++) {
-                    PreSupSize2 =  PreSupSizeList2.get(i);
-                    menu3.add(2, Menu.FIRST + i, i, PreSupSize2.width+"X"+PreSupSize2.height);
-                }
+                //pupMenu pop3 = new PopupMenu(this, findViewById(R.id.button3));
+                //nu menu3 = pop3.getMenu();
+                // (PreSupSizeList2 == null)
+                //  break;
+                //r(int i=0; i<PreSupSizeList2.size(); i++) {
+                //  PreSupSize2 =  PreSupSizeList2.get(i);
+                //  menu3.add(2, Menu.FIRST + i, i, PreSupSize2.width+"X"+PreSupSize2.height);
+                //
                 //pop.getMenuInflater().inflate(R.menu.popup_menu, pop.getMenu());
+                pop3 = new PopupMenu(this, findViewById(R.id.button3));
+                Menu menu3 = pop3.getMenu();
+                menu3.add(2, Menu.FIRST + 0, 0, "640X480");
+                menu3.add(2, Menu.FIRST + 1, 1, "720X480");
+                menu3.add(2, Menu.FIRST + 2, 2, "720X576");
+                menu3.add(2, Menu.FIRST + 3, 3, "800X480");
+                menu3.add(2, Menu.FIRST + 4, 4, "1280X720");
+                menu3.add(2, Menu.FIRST + 5, 5, "1920X1080");
+
                 pop3.show();
                 pop3.setOnMenuItemClickListener(MultiCameraActivity.this);
 		}
 		break;
 		case R.id.button4:{
                 Log.d(TAG, "button4");
-                PopupMenu pop4 = new PopupMenu(this, findViewById(R.id.button4));
-                Menu menu4 = pop4.getMenu();
-                if (PreSupFormatList2 == null)
-                    break;
-                for (int i=0; i<PreSupFormatList2.size(); i++) {
-                    PreSupFormat1 = PreSupFormatList2.get(i);
-                    menu4.add(3, Menu.FIRST + i, i, getImageFormatString(PreSupFormat2.intValue()));
-                }
+                //PopupMenu pop4 = new PopupMenu(this, findViewById(R.id.button4));
+                //Menu menu4 = pop4.getMenu();
+                //if (PreSupFormatList2 == null)
+                //    break;
+                //for (int i=0; i<PreSupFormatList2.size(); i++) {
+                //    PreSupFormat1 = PreSupFormatList2.get(i);
+                //    menu4.add(3, Menu.FIRST + i, i, getImageFormatString(PreSupFormat2.intValue()));
+                //}
                 //pop.getMenuInflater().inflate(R.menu.popup_menu, pop.getMenu());
+                pop4 = new PopupMenu(this, findViewById(R.id.button4));
+                Menu menu4 = pop4.getMenu();
+                menu4.add(3, Menu.FIRST + 0, 0, getImageFormatString(ImageFormat.NV21));
+                menu4.add(3, Menu.FIRST + 1, 1, getImageFormatString(ImageFormat.YV12));
+                menu4.add(3, Menu.FIRST + 2, 2, getImageFormatString(ImageFormat.RGB_565));
                 pop4.show();
                 pop4.setOnMenuItemClickListener(MultiCameraActivity.this);
 		}
 		break;
-/*
 		case R.id.button5:{
-                mOpenThread[4].start();
+                Log.d(TAG, "button5");
+                pop5 = new PopupMenu(this, findViewById(R.id.button5));
+                Menu menu5 = pop5.getMenu();
+                menu5.add(4, Menu.FIRST + 0, 0, "progressive");
+                menu5.add(4, Menu.FIRST + 1, 1, "interlaced");
+                pop5.show();
+                pop5.setOnMenuItemClickListener(MultiCameraActivity.this);
 		}
 		break;
 		case R.id.button6:{
-                mOpenThread[5].start();
+                Log.d(TAG, "button6");
+                pop6 = new PopupMenu(this, findViewById(R.id.button6));
+                Menu menu6 = pop6.getMenu();
+                menu6.add(5, Menu.FIRST + 0, 0, "progressive");
+                menu6.add(5, Menu.FIRST + 1, 1, "interlaced");
+                pop6.show();
+                pop6.setOnMenuItemClickListener(MultiCameraActivity.this);
 		}
 		break;
-*/
-            default:
-                break;
+        default:
+            break;
         }
     }
+
+
 
 
     public boolean onMenuItemClick(MenuItem arg0) {
@@ -762,22 +814,40 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                 //Toast.makeText(this, "set camera 0/1 PreviewSizes = "+PreSupSize1.width+"X"+PreSupSize1.height,Toast.LENGTH_LONG).show();
                 switch (arg0.getItemId()){
                     case Menu.FIRST + 0:
-                        width = 640;
-                        height = 480;
-                        Log.d(TAG, "PreviewSizes = " +width+ "X" + height);
-                        Toast.makeText(this, "set camera 0/1 PreviewSizes = "+ width+"X"+ height,Toast.LENGTH_LONG).show();
+                        width0 = 640;
+                        height0 = 480;
+                        Log.d(TAG, "PreviewSizes = " +width0+ "X" + height0);
+                        Toast.makeText(this, "set camera 0 PreviewSizes = "+ width0+"X"+ height0,Toast.LENGTH_LONG).show();
                         break;
                     case Menu.FIRST + 1:
-                        width = 1280;
-                        height = 720;
-                        Log.d(TAG, "PreviewSizes = " +width+ "X" + height);
-                        Toast.makeText(this, "set camera 0/1 PreviewSizes = "+ width+"X"+ height,Toast.LENGTH_LONG).show();
+                        width0 = 720;
+                        height0 = 480;
+                        Log.d(TAG, "PreviewSizes = " +width0+ "X" + height0);
+                        Toast.makeText(this, "set camera 0 PreviewSizes = "+ width0+"X"+ height0,Toast.LENGTH_LONG).show();
                         break;
                     case Menu.FIRST + 2:
-                        width = 1920;
-                        height = 1080;
-                        Log.d(TAG, "PreviewSizes = " +width+ "X" + height);
-                        Toast.makeText(this, "set camera 0/1 PreviewSizes = "+ width+"X"+ height,Toast.LENGTH_LONG).show();
+                        width0 = 720;
+                        height0 = 576;
+                        Log.d(TAG, "PreviewSizes = " +width0+ "X" + height0);
+                        Toast.makeText(this, "set camera 0 PreviewSizes = "+ width0+"X"+ height0,Toast.LENGTH_LONG).show();
+                        break;
+                    case Menu.FIRST + 3:
+                        width0 = 800;
+                        height0 = 480;
+                        Log.d(TAG, "PreviewSizes = " +width0+ "X" + height0);
+                        Toast.makeText(this, "set camera 0 PreviewSizes = "+ width0+"X"+ height0,Toast.LENGTH_LONG).show();
+                        break;
+                    case Menu.FIRST + 4:
+                        width0 = 1280;
+                        height0 = 720;
+                        Log.d(TAG, "PreviewSizes = " +width0+ "X" + height0);
+                        Toast.makeText(this, "set camera 0 PreviewSizes = "+ width0+"X"+ height0,Toast.LENGTH_LONG).show();
+                        break;
+                    case Menu.FIRST + 5:
+                        width0 = 1920;
+                        height0 = 1080;
+                        Log.d(TAG, "PreviewSizes = " +width0+ "X" + height0);
+                        Toast.makeText(this, "set camera 0 PreviewSizes = "+ width0+"X"+ height0,Toast.LENGTH_LONG).show();
                         break;
                     default:
                         break;
@@ -792,33 +862,117 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                     case Menu.FIRST + 0:
                         PreSupFormat1 = ImageFormat.NV21;
                         Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat1.intValue()));
-                        Toast.makeText(this, "set camera 0/1 PreviewFormat = "+getImageFormatString(PreSupFormat1.intValue()),Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "set camera 0 PreviewFormat = "+getImageFormatString(PreSupFormat1.intValue()),Toast.LENGTH_LONG).show();
                         break;
                     case Menu.FIRST + 1:
                         PreSupFormat1 = ImageFormat.YV12;
                         Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat1.intValue()));
-                        Toast.makeText(this, "set camera 0/1 PreviewFormat = "+getImageFormatString(PreSupFormat1.intValue()),Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "set camera 0 PreviewFormat = "+getImageFormatString(PreSupFormat1.intValue()),Toast.LENGTH_LONG).show();
                         break;
                     case Menu.FIRST + 2:
                         PreSupFormat1 = ImageFormat.RGB_565;
                         Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat1.intValue()));
-                        Toast.makeText(this, "set camera 0/1 PreviewFormat = "+getImageFormatString(PreSupFormat1.intValue()),Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "set camera 0 PreviewFormat = "+getImageFormatString(PreSupFormat1.intValue()),Toast.LENGTH_LONG).show();
                         break;
                     default:
                         break;
                 }
                 break;
             case 2:
-                Log.d(TAG, "PreviewSizes id = " +(arg0.getItemId()-1) + "PreSupSizeList2 = " + PreSupSizeList2.size());
-                PreSupSize2 =  PreSupSizeList2.get(arg0.getItemId()-1);
-                Log.d(TAG, "PreviewSizes = " +PreSupSize2.width+ "X" + PreSupSize2.height);
-                Toast.makeText(this, "set camera 2/3/4/5 PreviewSizes = "+PreSupSize2.width+"X"+PreSupSize2.height,Toast.LENGTH_LONG).show();
+
+                switch (arg0.getItemId()){
+                    case Menu.FIRST + 0:
+                        width1 = 640;
+                        height1 = 480;
+                        Log.d(TAG, "PreviewSizes = " +width1+ "X" + height1);
+                        Toast.makeText(this, "set camera 1 PreviewSizes = "+ width1+"X"+ height1,Toast.LENGTH_LONG).show();
+                        break;
+                    case Menu.FIRST + 1:
+                        width1 = 720;
+                        height1 = 480;
+                        Log.d(TAG, "PreviewSizes = " +width1+ "X" + height1);
+                        Toast.makeText(this, "set camera 1 PreviewSizes = "+ width1+"X"+ height1,Toast.LENGTH_LONG).show();
+                        break;
+                    case Menu.FIRST + 2:
+                        width1 = 720;
+                        height1 = 576;
+                        Log.d(TAG, "PreviewSizes = " +width1+ "X" + height1);
+                        Toast.makeText(this, "set camera 1 PreviewSizes = "+ width1+"X"+ height1,Toast.LENGTH_LONG).show();
+                        break;
+                    case Menu.FIRST + 3:
+                        width1 = 800;
+                        height1 = 480;
+                        Log.d(TAG, "PreviewSizes = " +width1+ "X" + height1);
+                        Toast.makeText(this, "set camera 1 PreviewSizes = "+ width1+"X"+ height1,Toast.LENGTH_LONG).show();
+                        break;
+                    case Menu.FIRST + 4:
+                        width1 = 1280;
+                        height1 = 720;
+                        Log.d(TAG, "PreviewSizes = " +width1+ "X" + height1);
+                        Toast.makeText(this, "set camera 1 PreviewSizes = "+ width1+"X"+ height1,Toast.LENGTH_LONG).show();
+                        break;
+                    case Menu.FIRST + 5:
+                        width1 = 1920;
+                        height1 = 1080;
+                        Log.d(TAG, "PreviewSizes = " +width1+ "X" + height1);
+                        Toast.makeText(this, "set camera 1 PreviewSizes = "+ width1+"X"+ height1,Toast.LENGTH_LONG).show();
+                        break;
+                    default:
+                        break;
+                }
                 break;
             case 3:
-                Log.d(TAG, "PreSupFormat id = " +(arg0.getItemId()-1) + "PreSupFormatList2 = " + PreSupSizeList2.size());
-                PreSupFormat2 = PreSupFormatList2.get(arg0.getItemId()-1);
-                Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat2.intValue()));
-                Toast.makeText(this, "set camera 2/3/4/5 PreviewFormat = "+getImageFormatString(PreSupFormat2.intValue()),Toast.LENGTH_LONG).show();
+                switch (arg0.getItemId()){
+                    case Menu.FIRST + 0:
+                        PreSupFormat2 = ImageFormat.NV21;
+                        Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat2.intValue()));
+                        Toast.makeText(this, "set camera 1 PreviewFormat = "+getImageFormatString(PreSupFormat2.intValue()),Toast.LENGTH_LONG).show();
+                        break;
+                    case Menu.FIRST + 1:
+                        PreSupFormat2 = ImageFormat.YV12;
+                        Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat2.intValue()));
+                        Toast.makeText(this, "set camera 1 PreviewFormat = "+getImageFormatString(PreSupFormat2.intValue()),Toast.LENGTH_LONG).show();
+                        break;
+                    case Menu.FIRST + 2:
+                        PreSupFormat2 = ImageFormat.RGB_565;
+                        Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat2.intValue()));
+                        Toast.makeText(this, "set camera 1 PreviewFormat = "+getImageFormatString(PreSupFormat2.intValue()),Toast.LENGTH_LONG).show();
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case 4:
+                switch (arg0.getItemId()){
+                    case Menu.FIRST + 0:
+                        CameraHalField0 = 0;
+                        Log.d(TAG, "progressive = " + CameraHalField0);
+                        Toast.makeText(this, "set camera 0 CameraHalField = "+CameraHalField0,Toast.LENGTH_LONG).show();
+                        break;
+                    case Menu.FIRST + 1:
+                        CameraHalField0 = 1;
+                        Log.d(TAG, "interlaced = " + CameraHalField0);
+                        Toast.makeText(this, "set camera 0 CameraHalField = "+CameraHalField0,Toast.LENGTH_LONG).show();
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case 5:
+                switch (arg0.getItemId()){
+                    case Menu.FIRST + 0:
+                        CameraHalField1 = 0;
+                        Log.d(TAG, "progressive = " + CameraHalField1);
+                        Toast.makeText(this, "set camera 1 CameraHalField = "+CameraHalField1,Toast.LENGTH_LONG).show();
+                        break;
+                    case Menu.FIRST + 1:
+                        CameraHalField1 = 1;
+                        Log.d(TAG, "interlaced = " + CameraHalField1);
+                        Toast.makeText(this, "set camera 1 CameraHalField = "+CameraHalField1,Toast.LENGTH_LONG).show();
+                        break;
+                    default:
+                        break;
+                }
                 break;
             default:
                 break;

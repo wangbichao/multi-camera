@@ -60,8 +60,8 @@
 
                 <SurfaceView
                     android:id="@+id/surfaceView1"
-                    android:layout_marginLeft="175dp"
-                    android:layout_marginRight="175dp"
+                    android:layout_marginLeft="200dp"
+                    android:layout_marginRight="200dp"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1" />
@@ -69,7 +69,7 @@
                 <ToggleButton
                     android:id="@+id/togglebutton1"
                     android:layout_marginTop="150dp"
-                    android:layout_marginLeft="600dp"
+                    android:layout_marginLeft="50dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textOn="ON"
@@ -77,9 +77,17 @@
                     android:checked="false"/>
 
                 <Button
+                    android:id="@+id/button5"
+                    android:layout_marginTop="1dp"
+                    android:layout_marginLeft="50dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Field Menu" />
+
+                <Button
                     android:id="@+id/button1"
                     android:layout_marginTop="50dp"
-                    android:layout_marginLeft="600dp"
+                    android:layout_marginLeft="50dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Size Menu" />
@@ -87,52 +95,12 @@
                 <Button
                     android:id="@+id/button2"
                     android:layout_marginTop="100dp"
-                    android:layout_marginLeft="600dp"
+                    android:layout_marginLeft="50dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Format Menu" />
 
             </RelativeLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="horizontal" >
-
-                <SurfaceView
-                    android:id="@+id/surfaceView3"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1" />
-
-                <SurfaceView
-                    android:id="@+id/surfaceView4"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="horizontal" >
-
-                <SurfaceView
-                    android:id="@+id/surfaceView5"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1" />
-
-                <SurfaceView
-                    android:id="@+id/surfaceView6"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1" />
-
-            </LinearLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -142,8 +110,8 @@
 
                 <SurfaceView
                     android:id="@+id/surfaceView2"
-                    android:layout_marginLeft="175dp"
-                    android:layout_marginRight="175dp"
+                    android:layout_marginLeft="200dp"
+                    android:layout_marginRight="200dp"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1" />
@@ -151,7 +119,7 @@
                 <ToggleButton
                     android:id="@+id/togglebutton2"
                     android:layout_marginTop="150dp"
-                    android:layout_marginLeft="600dp"
+                    android:layout_marginLeft="50dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textOn="ON"
@@ -159,9 +127,17 @@
                     android:checked="false"/>
 
                 <Button
+                    android:id="@+id/button6"
+                    android:layout_marginTop="1dp"
+                    android:layout_marginLeft="50dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Field Menu" />
+
+                <Button
                     android:id="@+id/button3"
                     android:layout_marginTop="50dp"
-                    android:layout_marginLeft="600dp"
+                    android:layout_marginLeft="50dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Size Menu" />
@@ -169,7 +145,7 @@
                 <Button
                     android:id="@+id/button4"
                     android:layout_marginTop="100dp"
-                    android:layout_marginLeft="600dp"
+                    android:layout_marginLeft="50dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Format Menu" />
