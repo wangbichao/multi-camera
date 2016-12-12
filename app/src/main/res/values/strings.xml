@@ -8,4 +8,39 @@
     <string name="button5">camera4</string>
     <string name="button6">camera5</string>
     <string name="dummy_content">MULTI\nCAMERA</string>
+    <string-array name="camera0_hal_field">
+        <item>progressive</item>
+        <item>interlaced </item>
+    </string-array>
+    <string-array name="camera1_hal_field">
+        <item>progressive</item>
+        <item>interlaced </item>
+    </string-array>
+    <string-array name="camera0_preview_size">
+        <item>640X480</item>
+        <item>720X480 </item>
+        <item>720X576</item>
+        <item>800X480</item>
+        <item>1280X720</item>
+        <item>1920X1080</item>
+    </string-array>
+    <string-array name="camera1_preview_size">
+        <item>640X480</item>
+        <item>720X480 </item>
+        <item>720X576</item>
+        <item>800X480</item>
+        <item>1280X720</item>
+        <item>1920X1080</item>
+    </string-array>
+    <string-array name="camera0_image_format">
+        <item>NV21</item>
+        <item>YV12 </item>
+        <item>RGB_565</item>
+    </string-array>
+    <string-array name="camera1_image_format">
+        <item>NV21</item>
+        <item>YV12 </item>
+        <item>RGB_565</item>
+    </string-array>
+
 </resources>

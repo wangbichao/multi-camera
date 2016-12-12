@@ -28,6 +28,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.view.View;
 
@@ -108,7 +109,7 @@ import android.graphics.ImageFormat;
  *
  * @see SystemUiHider
  */
-public class MultiCameraActivity extends Activity implements OnCheckedChangeListener, OnClickListener, PopupMenu.OnMenuItemClickListener, FragmentCompat.OnRequestPermissionsResultCallback {
+public class MultiCameraActivity extends Activity implements OnCheckedChangeListener, FragmentCompat.OnRequestPermissionsResultCallback {
     public final String TAG = MultiCameraActivity.class.getSimpleName();
     /**
      * Whether or not the system UI should be auto-hidden after
@@ -144,7 +145,8 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
      */
     private Semaphore mCameraOpenCloseLock = new Semaphore(1);
     private boolean[] CAMERA_INITED;
-    private Button[] mCameraTestButton;
+    //private Button[] mCameraTestButton;
+    private Spinner[] mCameraTestSpinner;
     private SurfaceView[] mSurfaceView;
     private Camera[] mCamera;
     private MultiOpenCameraThread[] mOpenThread;
@@ -164,12 +166,12 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
     private Camera.Size PreSupSize2;
     private Integer PreSupFormat1;
     private Integer PreSupFormat2;
-    private PopupMenu pop1;
-    private PopupMenu pop2;
-    private PopupMenu pop3;
-    private PopupMenu pop4;
-    private PopupMenu pop5;
-    private PopupMenu pop6;
+//    private PopupMenu pop1;
+//    private PopupMenu pop2;
+//    private PopupMenu pop3;
+//    private PopupMenu pop4;
+//    private PopupMenu pop5;
+//    private PopupMenu pop6;
     private int width0;
     private int height0;
     private int width1;
@@ -199,7 +201,8 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
         final View contentView = findViewById(R.id.fullscreen_content);
 
 //        CAMERA_INITED = new boolean[MAX_CAMERA];
-        mCameraTestButton = new Button[MAX_CAMERA];
+//        mCameraTestButton = new Button[MAX_CAMERA];
+        mCameraTestSpinner = new Spinner[MAX_CAMERA];
         mSurfaceView = new SurfaceView[MAX_CAMERA];
         mCamera = new Camera[MAX_CAMERA];
         mOpenThread = new MultiOpenCameraThread[MAX_CAMERA];
@@ -216,16 +219,23 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
         mSurfaceView[4] = (SurfaceView) findViewById(R.id.surfaceView5);
         mSurfaceView[5] = (SurfaceView) findViewById(R.id.surfaceView6);
 
-        mCameraTestButton[0] = (Button) findViewById(R.id.button1);
-        mCameraTestButton[1] = (Button) findViewById(R.id.button2);
-		mCameraTestButton[2] = (Button)findViewById(R.id.button3);
-		mCameraTestButton[3] = (Button)findViewById(R.id.button4);
-		mCameraTestButton[4] = (Button)findViewById(R.id.button5);
-		mCameraTestButton[5] = (Button)findViewById(R.id.button6);
+//      mCameraTestButton[0] = (Button)findViewById(R.id.button1);
+//      mCameraTestButton[1] = (Button)findViewById(R.id.button2);
+//		mCameraTestButton[2] = (Button)findViewById(R.id.button3);
+//		mCameraTestButton[3] = (Button)findViewById(R.id.button4);
+//		mCameraTestButton[4] = (Button)findViewById(R.id.button5);
+//		mCameraTestButton[5] = (Button)findViewById(R.id.button6);
 
-        for (int i = 0; i < MAX_CAMERA; i++) {
-            mCameraTestButton[i].setOnClickListener(this);
-        }
+        mCameraTestSpinner[0] = (Spinner)findViewById(R.id.spinner1);
+        mCameraTestSpinner[1] = (Spinner)findViewById(R.id.spinner2);
+        mCameraTestSpinner[2] = (Spinner)findViewById(R.id.spinner3);
+        mCameraTestSpinner[3] = (Spinner)findViewById(R.id.spinner4);
+        mCameraTestSpinner[4] = (Spinner)findViewById(R.id.spinner5);
+        mCameraTestSpinner[5] = (Spinner)findViewById(R.id.spinner6);
+
+//        for (int i = 0; i < MAX_CAMERA; i++) {
+//            mCameraTestButton[i].setOnClickListener(this);
+//        }
 
         //init togglebutton
         mtogglebutton1 = (ToggleButton) findViewById(R.id.togglebutton1);
@@ -240,6 +250,13 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
         for (int i = 0; i < MAX_CAMERA; i++) {
             mCloseThread[i] = new MultiCloseCameraThread(i);
         }
+        mCameraTestSpinner[0].setOnItemSelectedListener(new SpinnerSelectedListener());
+        mCameraTestSpinner[1].setOnItemSelectedListener(new SpinnerSelectedListener());
+        mCameraTestSpinner[2].setOnItemSelectedListener(new SpinnerSelectedListener());
+        mCameraTestSpinner[3].setOnItemSelectedListener(new SpinnerSelectedListener());
+        mCameraTestSpinner[4].setOnItemSelectedListener(new SpinnerSelectedListener());
+        mCameraTestSpinner[5].setOnItemSelectedListener(new SpinnerSelectedListener());
+
         Camera_num = Camera.getNumberOfCameras();
         Log.d(TAG, " Number of  Cameras is " + Camera_num);
 
@@ -361,6 +378,45 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
         }
     }
 */
+
+    public class SpinnerSelectedListener implements AdapterView.OnItemSelectedListener {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, 
+                    int pos, long id) {
+                switch (view.getId()) {
+                    case R.id.spinner1:
+                        Log.d(TAG, "111111111");
+                        break;
+                    case R.id.spinner2:
+                        Log.d(TAG, "222222");
+                        break;
+                    case R.id.spinner3:
+                        Log.d(TAG, "3333333333");
+                        break;
+                    case R.id.spinner4:
+                        Log.d(TAG, "4444444444");
+                        break;
+                    case R.id.spinner5:
+                        Log.d(TAG, "555555555");
+                        break;
+                    case R.id.spinner6:
+                        Log.d(TAG, "66666666666");
+                        break;
+                    default:
+                        Log.d(TAG, "default,default,default");
+                        break;
+                }
+                Log.d(TAG, " id " + id + "pos" + pos );
+                String[] languages = getResources().getStringArray(R.array.camera0_preview_size);
+                Toast.makeText(MultiCameraActivity.this, "00000000000:"+languages[pos], 2000).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Another interface callback
+            }
+    }
+
 //permission strat
     protected void requestPermission(int id, String permission, Runnable allowableRunnable, Runnable disallowableRunnable) {
         if (allowableRunnable == null) {
@@ -524,7 +580,7 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                     mCameraOpenCloseLock.release();
                 }
             } else {
-                Log.d(TAG, "camera camera_id is always open");
+                Log.d(TAG, "camera" + camera_id + "is always open");
             }
         }
 
@@ -563,7 +619,7 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                     e.printStackTrace();
                 }
             } else {
-                Log.d(TAG, "camera camera_id is not open");
+                Log.d(TAG, "camera" + camera_id + "is not open");
             }
         }
 
@@ -655,11 +711,11 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
         switch (buttonView.getId()) {
             case R.id.togglebutton1: {
                 if (isChecked) {
-                    Toast.makeText(MultiCameraActivity.this, "camera 0 ON", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MultiCameraActivity.this, "camera 0 ON", 800).show();
                     Log.d(TAG, "ToggleButton camera 0 open");
                     mOpenThread[0].start();
                 } else {
-                    Toast.makeText(MultiCameraActivity.this, "camera 0 OFF", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MultiCameraActivity.this, "camera 0 OFF", 800).show();
                     Log.d(TAG, "ToggleButton camera 0 close");
                     mCloseThread[0].start();
                 }
@@ -667,11 +723,11 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
             break;
             case R.id.togglebutton2: {
                 if (isChecked) {
-                    Toast.makeText(MultiCameraActivity.this, "camera 1 ON", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MultiCameraActivity.this, "camera 1 ON", 800).show();
                     Log.d(TAG, "ToggleButton camera 1 open");
                     mOpenThread[1].start();
                } else {
-                    Toast.makeText(MultiCameraActivity.this, "camera 1 OFF", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MultiCameraActivity.this, "camera 1 OFF", 800).show();
                     Log.d(TAG, "ToggleButton camera 1 close");
                     mCloseThread[1].start();
                 }
@@ -682,7 +738,7 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
         }
     }
 
-
+/*
     public void onClick(View v) {
         Log.d(TAG, new Exception().getStackTrace()[0].getMethodName());
 
@@ -800,9 +856,6 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
             break;
         }
     }
-
-
-
 
     public boolean onMenuItemClick(MenuItem arg0) {
         // TODO Auto-generated method stub
@@ -980,5 +1033,8 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
 
         return false;
     }
+
+*/
+
 
 }

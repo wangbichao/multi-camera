@@ -51,6 +51,12 @@
             android:layout_height="match_parent"
             android:orientation="vertical" >
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.01"
+                android:orientation="horizontal" >
+            </LinearLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -72,35 +78,45 @@
                     android:layout_marginLeft="50dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textOn="ON"
-                    android:textOff="OFF"
+                    android:textOn="Camera0:ON"
+                    android:textOff="Camera0:OFF"
                     android:checked="false"/>
 
-                <Button
-                    android:id="@+id/button5"
+                <Spinner
+                    android:id="@+id/spinner1"
                     android:layout_marginTop="1dp"
                     android:layout_marginLeft="50dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Field Menu" />
+                    android:entries="@array/camera0_hal_field"
+                    />
 
-                <Button
-                    android:id="@+id/button1"
+                <Spinner
+                    android:id="@+id/spinner2"
                     android:layout_marginTop="50dp"
                     android:layout_marginLeft="50dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Size Menu" />
+                    android:entries="@array/camera0_preview_size"
+                    />
 
-                <Button
-                    android:id="@+id/button2"
+                <Spinner
+                    android:id="@+id/spinner3"
                     android:layout_marginTop="100dp"
                     android:layout_marginLeft="50dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Format Menu" />
+                    android:entries="@array/camera0_image_format"
+                    />
 
             </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.01"
+                android:orientation="horizontal" >
+            </LinearLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -122,35 +138,45 @@
                     android:layout_marginLeft="50dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textOn="ON"
-                    android:textOff="OFF"
+                    android:textOn="Camera1:ON"
+                    android:textOff="Camera1:OFF"
                     android:checked="false"/>
 
-                <Button
-                    android:id="@+id/button6"
+                <Spinner
+                    android:id="@+id/spinner4"
                     android:layout_marginTop="1dp"
                     android:layout_marginLeft="50dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Field Menu" />
+                    android:entries="@array/camera1_hal_field"
+                    />
 
-                <Button
-                    android:id="@+id/button3"
+                <Spinner
+                    android:id="@+id/spinner5"
                     android:layout_marginTop="50dp"
                     android:layout_marginLeft="50dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Size Menu" />
+                    android:entries="@array/camera1_preview_size"
+                    />
 
-                <Button
-                    android:id="@+id/button4"
+                <Spinner
+                    android:id="@+id/spinner6"
                     android:layout_marginTop="100dp"
                     android:layout_marginLeft="50dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Format Menu" />
+                    android:entries="@array/camera1_image_format"
+                    />
 
             </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.01"
+                android:orientation="horizontal" >
+            </LinearLayout>
             
         </LinearLayout>
 
