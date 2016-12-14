@@ -658,6 +658,8 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                     Log.d(TAG, "Interrupted while trying to lock camera opening.", e);
                 }
                 try {
+                    mSurfaceView[camera_id].setZOrderOnTop(false);
+                    mSurfaceView[camera_id].getHolder().setFormat(PixelFormat.TRANSLUCENT);
                     mCamera[camera_id].setPreviewDisplay(mSurfaceView[camera_id].getHolder());
                     if (camera_id == 0) {
                         if((width0 == 0)||(height0 == 0)){
@@ -668,7 +670,6 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                             PreSupFormat1 = ImageFormat.NV21;
                         Log.d(TAG, "camera preview size" + width0 + "X" + height0);
                         //mParameters1.setPreviewSize(PreSupSize1.width,PreSupSize1.height);
-                        //mSurfaceView[camera_id].getHolder().setFixedSize(width0,height0);
                         mParameters1.setPreviewSize((int)width0,(int)height0);
                         mParameters1.set("CameraHalField",CameraHalField0);
                         mParameters1.setPreviewFormat(Integer.valueOf(PreSupFormat1.intValue()));
@@ -724,13 +725,27 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                     mCamera[camera_id].stopPreview();
                     mCamera[camera_id].release();
                     mCamera[camera_id] = null;
+                    mSurfaceView[camera_id].setZOrderOnTop(true);
+                    mSurfaceView[camera_id].getHolder().setFormat(PixelFormat.TRANSPARENT);
                 } catch (InterruptedException e) {
                     Log.d(TAG, "Interrupted while trying to lock camera closing.", e);
                 } finally {
                     mCameraOpenCloseLock.release();
                 }
+/*
+                Canvas mCanvas=null;
                 try {
-                    Thread.sleep(2000);
+                    mCanvas =mSurfaceView[camera_id].getHolder().lockCanvas(null);
+                    //mCanvas.drawColor(Color.WHITE);
+                    mCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.SRC);
+                } catch (Exception e) {
+                    Log.d(TAG, "Interrupted while trying to lock camera closing.", e);
+                } finally {
+                    mSurfaceView[camera_id].getHolder().unlockCanvasAndPost(mCanvas);
+                }
+*/
+                try {
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
