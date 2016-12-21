@@ -36,11 +36,15 @@
         <item>NV21</item>
         <item>YV12 </item>
         <item>RGB_565</item>
+        <item>NV16 </item>
+        <item>YUY2</item>
     </string-array>
     <string-array name="camera1_image_format">
         <item>NV21</item>
         <item>YV12 </item>
         <item>RGB_565</item>
+        <item>NV16 </item>
+        <item>YUY2</item>
     </string-array>
 
 </resources>

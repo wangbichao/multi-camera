@@ -449,6 +449,14 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                                 PreSupFormat1 = ImageFormat.RGB_565;
                                 Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat1.intValue()));
                                 break;
+                            case 3:
+                                PreSupFormat1 = ImageFormat.NV16;
+                                Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat1.intValue()));
+                                break;
+                            case 4:
+                                PreSupFormat1 = ImageFormat.YUY2;
+                                Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat1.intValue()));
+                                break;
                             default:
                                 break;
                             }
@@ -516,6 +524,14 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                             case 2:
                                 PreSupFormat2 = ImageFormat.RGB_565;
                                 Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat2.intValue()));
+                                break;
+                            case 3:
+                                PreSupFormat1 = ImageFormat.NV16;
+                                Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat1.intValue()));
+                                break;
+                            case 4:
+                                PreSupFormat1 = ImageFormat.YUY2;
+                                Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat1.intValue()));
                                 break;
                             default:
                                 break;
