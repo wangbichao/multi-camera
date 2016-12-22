@@ -11,18 +11,37 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MultiCameraActivity"
-            android:windowSoftInputMode="adjustPan|stateAlwaysHidden|stateAlwaysVisible"
+
+        <activity
+            android:name=".MultiCameraActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
+            android:screenOrientation="landscape"
             android:theme="@style/FullscreenTheme"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden|stateAlwaysVisible" >
+        </activity>
+
+        <activity
+            android:name=".NCameraActivity"
+            android:label="@string/app_name"
             android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
+        <activity
+            android:name=".SixCameraActivity"
+            android:screenOrientation="portrait">
+        </activity>
+
+        <activity
+            android:name=".EightCameraActivity"
+            android:screenOrientation="portrait">
+        </activity>
+
     </application>
 
 </manifest>
