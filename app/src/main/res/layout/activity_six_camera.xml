@@ -75,24 +75,10 @@ tools:context="com.example.tim.multicamera.SixCameraActivity">
             android:orientation="horizontal" >
 
             <SurfaceView
-                android:id="@+id/surfaceView2"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1" />
-
-            <SurfaceView
                 android:id="@+id/surfaceView3"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal" >
 
             <SurfaceView
                 android:id="@+id/surfaceView4"
@@ -100,8 +86,22 @@ tools:context="com.example.tim.multicamera.SixCameraActivity">
                 android:layout_height="match_parent"
                 android:layout_weight="1" />
 
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal" >
+
             <SurfaceView
                 android:id="@+id/surfaceView5"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <SurfaceView
+                android:id="@+id/surfaceView6"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1" />
@@ -115,7 +115,7 @@ tools:context="com.example.tim.multicamera.SixCameraActivity">
             android:orientation="horizontal" >
 
             <SurfaceView
-                android:id="@+id/surfaceView6"
+                android:id="@+id/surfaceView2"
                 android:layout_marginLeft="175dp"
                 android:layout_marginRight="175dp"
                 android:layout_width="0dp"
