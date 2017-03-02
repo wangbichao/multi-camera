@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import android.app.ActionBar;
 import android.app.Activity;
+import android.content.pm.ActivityInfo;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ImageFormat;
@@ -20,6 +22,8 @@ import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.PopupMenu;
 import android.util.Log;
 import android.view.Menu;
@@ -109,7 +113,7 @@ import android.graphics.ImageFormat;
  *
  * @see SystemUiHider
  */
-public class EightCameraActivity extends AppCompatActivity {
+public class EightCameraActivity extends Activity implements OnClickListener {
     public final String TAG = SixCameraActivity.class.getSimpleName();
     private static int MAX_CAMERA = 8;
 
@@ -145,6 +149,11 @@ public class EightCameraActivity extends AppCompatActivity {
     private MultiCloseCameraThread[] mCloseThread;
     private Map<Integer, Runnable> allowablePermissionRunnables = new HashMap<>();
     private Map<Integer, Runnable> disallowablePermissionRunnables = new HashMap<>();
+    private Button mCameraTestButton1;
+    private Button mCameraTestButton2;
+    private Button mCameraTestButton3;
+    private Camera.Parameters mParameters;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, new Exception().getStackTrace()[0].getMethodName());
@@ -161,9 +170,14 @@ public class EightCameraActivity extends AppCompatActivity {
                 Log.e(TAG, "App have NO permission to open camera");
             }
         });
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+
         setContentView(R.layout.activity_eight_camera);
-        final View controlsView = findViewById(R.id.fullscreen_content_controls);
-        final View contentView = findViewById(R.id.fullscreen_content);
+        getWindow().setFlags(WindowManager.LayoutParams. FLAG_FULLSCREEN ,
+                WindowManager.LayoutParams. FLAG_FULLSCREEN);
+        //final View controlsView = findViewById(R.id.fullscreen_content_controls);
+        //final View contentView = findViewById(R.id.fullscreen_content);
         mSurfaceView = new SurfaceView[MAX_CAMERA];
         mCamera = new Camera[MAX_CAMERA];
         mOpenThread = new MultiOpenCameraThread[MAX_CAMERA];
@@ -190,9 +204,63 @@ public class EightCameraActivity extends AppCompatActivity {
         Log.d(TAG, " Number of  Cameras is " + Camera_num);
 
         // open all camera
-        for (int i = 0; i < Camera_num; i++) {
-            mOpenThread[i].start();
-        }
+        //for (int i = 0; i < Camera_num; i++) {
+        //    mOpenThread[i].start();
+        //}
+        mCameraTestButton1 = (Button) findViewById(R.id.button1);
+        mCameraTestButton2 = (Button) findViewById(R.id.button2);
+        mCameraTestButton3 = (Button) findViewById(R.id.button3);
+
+        mCameraTestButton1.setOnClickListener(this);
+        mCameraTestButton2.setOnClickListener(this);
+        mCameraTestButton3.setOnClickListener(this);
+
+        mCameraTestButton1.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+
+                if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                    mCameraTestButton1.setBackgroundColor(Color.TRANSPARENT);
+                    mCameraTestButton3.setBackgroundColor(Color.TRANSPARENT);
+                }
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    mCameraTestButton1.setBackgroundColor(Color.YELLOW);
+                    mCameraTestButton3.setBackgroundColor(Color.YELLOW);
+                }
+
+                return false;
+            }
+        });
+        mCameraTestButton2.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+
+                if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                    mCameraTestButton2.setBackgroundColor(Color.TRANSPARENT);
+                }
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    mCameraTestButton2.setBackgroundColor(Color.YELLOW);
+                }
+
+                return false;
+            }
+        });
+        mCameraTestButton3.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+
+                if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                    mCameraTestButton1.setBackgroundColor(Color.TRANSPARENT);
+                    mCameraTestButton3.setBackgroundColor(Color.TRANSPARENT);
+                }
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    mCameraTestButton1.setBackgroundColor(Color.YELLOW);
+                    mCameraTestButton3.setBackgroundColor(Color.YELLOW);
+                }
+
+                return false;
+            }
+        });
     }
 
 //permission strat
@@ -303,6 +371,10 @@ public class EightCameraActivity extends AppCompatActivity {
                     Log.d(TAG, "Interrupted while trying to lock camera opening.", e);
                 }
                 try {
+
+                    mParameters = mCamera[camera_id].getParameters();
+                    mParameters.set("CameraHalNum",8);
+                    mCamera[camera_id].setParameters(mParameters);
                     //mSurfaceView[camera_id].setZOrderOnTop(false);
                     //mSurfaceView[camera_id].getHolder().setFormat(PixelFormat.TRANSLUCENT);
                     mCamera[camera_id].setPreviewDisplay(mSurfaceView[camera_id].getHolder());
@@ -480,6 +552,32 @@ public class EightCameraActivity extends AppCompatActivity {
     protected void onDestroy() {
         Log.d(TAG, new Exception().getStackTrace()[0].getMethodName());
         super.onDestroy();
+    }
+    public void onClick(View v) {
+        Log.d(TAG, new Exception().getStackTrace()[0].getMethodName());
+
+        switch (v.getId()) {
+            case R.id.button1:
+                mOpenThread[4].start();
+                mOpenThread[5].start();
+                mOpenThread[6].start();
+                mOpenThread[7].start();
+                break;
+            case R.id.button2:
+                mOpenThread[0].start();
+                mOpenThread[1].start();
+                mOpenThread[2].start();
+                mOpenThread[3].start();
+                break;
+            case R.id.button3:
+                mOpenThread[4].start();
+                mOpenThread[5].start();
+                mOpenThread[6].start();
+                mOpenThread[7].start();
+                break;
+            default:
+                break;
+        }
     }
 
 }

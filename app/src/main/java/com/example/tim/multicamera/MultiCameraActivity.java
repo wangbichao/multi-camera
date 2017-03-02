@@ -834,9 +834,14 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
     protected void onPause() {
         Log.d(TAG, new Exception().getStackTrace()[0].getMethodName());
         super.onPause();
-        for (int i = 0; i < Camera_num; i++) {
-            mCloseThread[i].start();
+        try {
+            for (int i = 0; i < Camera_num; i++) {
+                mCloseThread[i].start();
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "" + e.getMessage());
         }
+
     }
 
     @Override

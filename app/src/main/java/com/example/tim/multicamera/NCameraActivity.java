@@ -205,10 +205,12 @@ public class NCameraActivity extends AppCompatActivity {
                 case 0:
                     //Toast.makeText(getApplicationContext(), "2camera", 1).show();
                     startActivity(new Intent(NCameraActivity.this,MultiCameraActivity.class));
+                    //startActivity(new Intent(NCameraActivity.this,SixCameraActivity.class));
                     break;
                 case 1:
                     //Toast.makeText(getApplicationContext(), "6camera", 1).show();
                     startActivity(new Intent(NCameraActivity.this,SixCameraActivity.class));
+                    //startActivity(new Intent(NCameraActivity.this,EightCameraActivity.class));
                     break;
                 case 2:
                     //Toast.makeText(getApplicationContext(), "8camera", 1).show();
