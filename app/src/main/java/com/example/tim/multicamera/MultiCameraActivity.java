@@ -179,6 +179,13 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
     private int CameraHalField0;
     private int CameraHalField1;
 
+    private int input_width0;
+    private int input_height0;
+    private int input_width1;
+    private int input_height1;
+    private Integer InputCameraFormat0;
+    private Integer InputCameraFormat1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, new Exception().getStackTrace()[0].getMethodName());
@@ -202,7 +209,7 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
 
 //        CAMERA_INITED = new boolean[MAX_CAMERA];
 //        mCameraTestButton = new Button[MAX_CAMERA];
-        mCameraTestSpinner = new Spinner[MAX_CAMERA];
+        mCameraTestSpinner = new Spinner[10];
         mSurfaceView = new SurfaceView[MAX_CAMERA];
         mCamera = new Camera[MAX_CAMERA];
         mOpenThread = new MultiOpenCameraThread[MAX_CAMERA];
@@ -212,6 +219,7 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
 //            CAMERA_INITED[i] = false;
 //            mCamera[i] = null;
 //        }
+
         mSurfaceView[0] = (SurfaceView) findViewById(R.id.surfaceView1);
         mSurfaceView[1] = (SurfaceView) findViewById(R.id.surfaceView2);
         mSurfaceView[2] = (SurfaceView) findViewById(R.id.surfaceView3);
@@ -226,12 +234,16 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
 //		mCameraTestButton[4] = (Button)findViewById(R.id.button5);
 //		mCameraTestButton[5] = (Button)findViewById(R.id.button6);
 
-        mCameraTestSpinner[0] = (Spinner)findViewById(R.id.spinner1);
-        mCameraTestSpinner[1] = (Spinner)findViewById(R.id.spinner2);
-        mCameraTestSpinner[2] = (Spinner)findViewById(R.id.spinner3);
-        mCameraTestSpinner[3] = (Spinner)findViewById(R.id.spinner4);
-        mCameraTestSpinner[4] = (Spinner)findViewById(R.id.spinner5);
-        mCameraTestSpinner[5] = (Spinner)findViewById(R.id.spinner6);
+        mCameraTestSpinner[0] = (Spinner) findViewById(R.id.spinner1);
+        mCameraTestSpinner[1] = (Spinner) findViewById(R.id.spinner2);
+        mCameraTestSpinner[2] = (Spinner) findViewById(R.id.spinner3);
+        mCameraTestSpinner[3] = (Spinner) findViewById(R.id.spinner4);
+        mCameraTestSpinner[4] = (Spinner) findViewById(R.id.spinner5);
+        mCameraTestSpinner[5] = (Spinner) findViewById(R.id.spinner6);
+        mCameraTestSpinner[6] = (Spinner) findViewById(R.id.spinner7);
+        mCameraTestSpinner[7] = (Spinner) findViewById(R.id.spinner8);
+        mCameraTestSpinner[8] = (Spinner) findViewById(R.id.spinner9);
+        mCameraTestSpinner[9] = (Spinner) findViewById(R.id.spinner10);
 
 //        for (int i = 0; i < MAX_CAMERA; i++) {
 //            mCameraTestButton[i].setOnClickListener(this);
@@ -250,15 +262,13 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
         for (int i = 0; i < MAX_CAMERA; i++) {
             mCloseThread[i] = new MultiCloseCameraThread(i);
         }
-        mCameraTestSpinner[0].setOnItemSelectedListener(new SpinnerSelectedListener());
-        mCameraTestSpinner[1].setOnItemSelectedListener(new SpinnerSelectedListener());
-        mCameraTestSpinner[2].setOnItemSelectedListener(new SpinnerSelectedListener());
-        mCameraTestSpinner[3].setOnItemSelectedListener(new SpinnerSelectedListener());
-        mCameraTestSpinner[4].setOnItemSelectedListener(new SpinnerSelectedListener());
-        mCameraTestSpinner[5].setOnItemSelectedListener(new SpinnerSelectedListener());
+
+        for (int i = 0; i < 10; i++) {
+            mCameraTestSpinner[i].setOnItemSelectedListener(new SpinnerSelectedListener());
+        }
 
         Camera_num = Camera.getNumberOfCameras();
-        Log.d(TAG, " Number of  Cameras is " + Camera_num);
+        Log.d(TAG, " Number of  cameras is " + Camera_num);
 
         /*
         try {
@@ -329,12 +339,9 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
 			}
 		});
 */
-        // Upon interacting with UI controls, delay any scheduled hide()
-        // operations to prevent the jarring behavior of controls going away
-        // while interacting with the UI.
-        //findViewById(R.id.dummy_button).setOnTouchListener(
-        //		mDelayHideTouchListener);
+
     }
+
 /*
     public void execShell(String cmd){
         try{
@@ -380,176 +387,316 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
 */
 
     public class SpinnerSelectedListener implements AdapterView.OnItemSelectedListener {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, 
-                    int pos, long id) {
-                Log.d(TAG, " id =  " + id + " --- pos = " + pos );
-                switch (parent.getId()) {
-                    case R.id.spinner1:
-                        switch (pos){
-                            case 0:
-                                CameraHalField0 = 0;
-                                Log.d(TAG, "progressive = " + CameraHalField0);
-                                break;
-                            case 1:
-                                CameraHalField0 = 1;
-                                Log.d(TAG, "interlaced = " + CameraHalField0);
-                                break;
-                            default:
-                                break;
-                            }
-                        break;
-                    case R.id.spinner2:
-                        switch (pos){
-                            case 0:
-                                width0 = 640;
-                                height0 = 480;
-                                Log.d(TAG, "PreviewSizes = " +width0+ "X" + height0);
-                                break;
-                            case 1:
-                                width0 = 720;
-                                height0 = 480;
-                                Log.d(TAG, "PreviewSizes = " +width0+ "X" + height0);
-                                break;
-                            case 2:
-                                width0 = 720;
-                                height0 = 576;
-                                Log.d(TAG, "PreviewSizes = " +width0+ "X" + height0);
-                                break;
-                            case 3:
-                                width0 = 800;
-                                height0 = 480;
-                                Log.d(TAG, "PreviewSizes = " +width0+ "X" + height0);
-                                break;
-                            case 4:
-                                width0 = 1280;
-                                height0 = 720;
-                                Log.d(TAG, "PreviewSizes = " +width0+ "X" + height0);
-                                break;
-                            case 5:
-                                width0 = 1920;
-                                height0 = 1080;
-                                Log.d(TAG, "PreviewSizes = " +width0+ "X" + height0);
-                                break;
-                            default:
-                                break;
-                            }
-                        break;
-                    case R.id.spinner3:
-                        switch (pos){
-                            case 0:
-                                PreSupFormat1 = ImageFormat.NV21;
-                                Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat1.intValue()));
-                                break;
-                            case 1:
-                                PreSupFormat1 = ImageFormat.YV12;
-                                Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat1.intValue()));
-                                break;
-                            case 2:
-                                PreSupFormat1 = ImageFormat.RGB_565;
-                                Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat1.intValue()));
-                                break;
-                            case 3:
-                                PreSupFormat1 = ImageFormat.NV16;
-                                Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat1.intValue()));
-                                break;
-                            case 4:
-                                PreSupFormat1 = ImageFormat.YUY2;
-                                Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat1.intValue()));
-                                break;
-                            default:
-                                break;
-                            }
-                        break;
-                    case R.id.spinner4:
-                        switch (pos){
-                            case 0:
-                                CameraHalField1 = 0;
-                                Log.d(TAG, "progressive = " + CameraHalField1);
-                                break;
-                            case 1:
-                                CameraHalField1 = 1;
-                                Log.d(TAG, "interlaced = " + CameraHalField1);
-                                break;
-                            default:
-                                break;
-                            }
-                        break;
-                    case R.id.spinner5:
-                        switch (pos){
-                            case 0:
-                                width1 = 640;
-                                height1 = 480;
-                                Log.d(TAG, "PreviewSizes = " +width1+ "X" + height1);
-                                break;
-                            case 1:
-                                width1 = 720;
-                                height1 = 480;
-                                Log.d(TAG, "PreviewSizes = " +width1+ "X" + height1);
-                                break;
-                            case 2:
-                                width1 = 720;
-                                height1 = 576;
-                                Log.d(TAG, "PreviewSizes = " +width1+ "X" + height1);
-                                break;
-                            case 3:
-                                width1 = 800;
-                                height1 = 480;
-                                Log.d(TAG, "PreviewSizes = " +width1+ "X" + height1);
-                                break;
-                            case 4:
-                                width1 = 1280;
-                                height1 = 720;
-                                Log.d(TAG, "PreviewSizes = " +width1+ "X" + height1);
-                                break;
-                            case 5:
-                                width1 = 1920;
-                                height1 = 1080;
-                                Log.d(TAG, "PreviewSizes = " +width1+ "X" + height1);
-                                break;
-                            default:
-                                break;
-                            }
-                        break;
-                    case R.id.spinner6:
-                        switch (pos){
-                            case 0:
-                                PreSupFormat2 = ImageFormat.NV21;
-                                Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat2.intValue()));
-                                break;
-                            case 1:
-                                PreSupFormat2 = ImageFormat.YV12;
-                                Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat2.intValue()));
-                                break;
-                            case 2:
-                                PreSupFormat2 = ImageFormat.RGB_565;
-                                Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat2.intValue()));
-                                break;
-                            case 3:
-                                PreSupFormat1 = ImageFormat.NV16;
-                                Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat1.intValue()));
-                                break;
-                            case 4:
-                                PreSupFormat1 = ImageFormat.YUY2;
-                                Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat1.intValue()));
-                                break;
-                            default:
-                                break;
-                            }
-                        break;
-                    default:
-                        Log.d(TAG, "default,default,default");
-                        break;
-                }
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view,
+                                   int pos, long id) {
+            Log.d(TAG, " id =  " + id + " --- pos = " + pos);
+            switch (parent.getId()) {
+                case R.id.spinner1:
+                    switch (pos) {
+                        case 0:
+                            CameraHalField0 = 0;
+                            Log.d(TAG, "camera 0 progressive = " + CameraHalField0);
+                            break;
+                        case 1:
+                            CameraHalField0 = 1;
+                            Log.d(TAG, "camera 0 interlaced = " + CameraHalField0);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case R.id.spinner2:
+                    switch (pos) {
+                        case 0:
+                            width0 = 640;
+                            height0 = 480;
+                            Log.d(TAG, "camera 0 PreviewSizes = " + width0 + "X" + height0);
+                            break;
+                        case 1:
+                            width0 = 720;
+                            height0 = 480;
+                            Log.d(TAG, "camera 0 PreviewSizes = " + width0 + "X" + height0);
+                            break;
+                        case 2:
+                            width0 = 720;
+                            height0 = 576;
+                            Log.d(TAG, "camera 0 PreviewSizes = " + width0 + "X" + height0);
+                            break;
+                        case 3:
+                            width0 = 800;
+                            height0 = 480;
+                            Log.d(TAG, "camera 0 PreviewSizes = " + width0 + "X" + height0);
+                            break;
+                        case 4:
+                            width0 = 1280;
+                            height0 = 720;
+                            Log.d(TAG, "camera 0 PreviewSizes = " + width0 + "X" + height0);
+                            break;
+                        case 5:
+                            width0 = 1920;
+                            height0 = 1080;
+                            Log.d(TAG, "camera 0 PreviewSizes = " + width0 + "X" + height0);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case R.id.spinner3:
+                    switch (pos) {
+                        case 0:
+                            PreSupFormat1 = ImageFormat.NV21;
+                            Log.d(TAG, "camera 0 PreSupFormat = " + getImageFormatString(PreSupFormat1.intValue()));
+                            break;
+                        case 1:
+                            PreSupFormat1 = ImageFormat.YV12;
+                            Log.d(TAG, "camera 0 PreSupFormat = " + getImageFormatString(PreSupFormat1.intValue()));
+                            break;
+                        case 2:
+                            PreSupFormat1 = ImageFormat.RGB_565;
+                            Log.d(TAG, "camera 0 PreSupFormat = " + getImageFormatString(PreSupFormat1.intValue()));
+                            break;
+                        case 3:
+                            PreSupFormat1 = ImageFormat.NV16;
+                            Log.d(TAG, "camera 0 PreSupFormat = " + getImageFormatString(PreSupFormat1.intValue()));
+                            break;
+                        case 4:
+                            PreSupFormat1 = ImageFormat.YUY2;
+                            Log.d(TAG, "camera 0 PreSupFormat = " + getImageFormatString(PreSupFormat1.intValue()));
+                            break;
+                        case 5:
+                            PreSupFormat1 = ImageFormat.YUV_420_888;
+                            Log.d(TAG, "camera 0 PreSupFormat = " + getImageFormatString(PreSupFormat1.intValue()));
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case R.id.spinner4:
+                    switch (pos) {
+                        case 0:
+                            CameraHalField1 = 0;
+                            Log.d(TAG, "camera 1 progressive = " + CameraHalField1);
+                            break;
+                        case 1:
+                            CameraHalField1 = 1;
+                            Log.d(TAG, "camera 1 interlaced = " + CameraHalField1);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case R.id.spinner5:
+                    switch (pos) {
+                        case 0:
+                            width1 = 640;
+                            height1 = 480;
+                            Log.d(TAG, "camera 1 PreviewSizes = " + width1 + "X" + height1);
+                            break;
+                        case 1:
+                            width1 = 720;
+                            height1 = 480;
+                            Log.d(TAG, "camera 1 PreviewSizes = " + width1 + "X" + height1);
+                            break;
+                        case 2:
+                            width1 = 720;
+                            height1 = 576;
+                            Log.d(TAG, "camera 1 PreviewSizes = " + width1 + "X" + height1);
+                            break;
+                        case 3:
+                            width1 = 800;
+                            height1 = 480;
+                            Log.d(TAG, "camera 1 PreviewSizes = " + width1 + "X" + height1);
+                            break;
+                        case 4:
+                            width1 = 1280;
+                            height1 = 720;
+                            Log.d(TAG, "camera 1 PreviewSizes = " + width1 + "X" + height1);
+                            break;
+                        case 5:
+                            width1 = 1920;
+                            height1 = 1080;
+                            Log.d(TAG, "camera 1 PreviewSizes = " + width1 + "X" + height1);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case R.id.spinner6:
+                    switch (pos) {
+                        case 0:
+                            PreSupFormat2 = ImageFormat.NV21;
+                            Log.d(TAG, "camera 1 PreSupFormat = " + getImageFormatString(PreSupFormat2.intValue()));
+                            break;
+                        case 1:
+                            PreSupFormat2 = ImageFormat.YV12;
+                            Log.d(TAG, "camera 1 PreSupFormat = " + getImageFormatString(PreSupFormat2.intValue()));
+                            break;
+                        case 2:
+                            PreSupFormat2 = ImageFormat.RGB_565;
+                            Log.d(TAG, "camera 1 PreSupFormat = " + getImageFormatString(PreSupFormat2.intValue()));
+                            break;
+                        case 3:
+                            PreSupFormat2 = ImageFormat.NV16;
+                            Log.d(TAG, "camera 1 PreSupFormat = " + getImageFormatString(PreSupFormat2.intValue()));
+                            break;
+                        case 4:
+                            PreSupFormat2 = ImageFormat.YUY2;
+                            Log.d(TAG, "camera 1 PreSupFormat = " + getImageFormatString(PreSupFormat2.intValue()));
+                            break;
+                        case 5:
+                            PreSupFormat2 = ImageFormat.YUV_420_888;
+                            Log.d(TAG, "camera 1 PreSupFormat = " + getImageFormatString(PreSupFormat2.intValue()));
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case R.id.spinner7:
+                    switch (pos) {
+                        case 0:
+                            input_width0 = 640;
+                            input_height0 = 480;
+                            Log.d(TAG, "camera 0 Input PreviewSizes = " + input_width0 + "X" + input_height0);
+                            break;
+                        case 1:
+                            input_width0 = 720;
+                            input_height0 = 480;
+                            Log.d(TAG, "camera 0 Input PreviewSizes = " + input_width0 + "X" + input_height0);
+                            break;
+                        case 2:
+                            input_width0 = 720;
+                            input_height0 = 576;
+                            Log.d(TAG, "camera 0 Input PreviewSizes = " + input_width0 + "X" + input_height0);
+                            break;
+                        case 3:
+                            input_width0 = 800;
+                            input_height0 = 480;
+                            Log.d(TAG, "camera 0 Input PreviewSizes = " + input_width0 + "X" + input_height0);
+                            break;
+                        case 4:
+                            input_width0 = 1280;
+                            input_height0 = 720;
+                            Log.d(TAG, "camera 0 Input PreviewSizes = " + input_width0 + "X" + input_height0);
+                            break;
+                        case 5:
+                            input_width0 = 1920;
+                            input_height0 = 1080;
+                            Log.d(TAG, "camera 0 Input PreviewSizes = " + input_width0 + "X" + input_height0);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case R.id.spinner8:
+                    switch (pos) {
+                        case 0:
+                            InputCameraFormat0 = ImageFormat.NV21;
+                            Log.d(TAG, "camera 0 Input PreSupFormat = " + getImageFormatString(InputCameraFormat0.intValue()));
+                            break;
+                        case 1:
+                            InputCameraFormat0 = ImageFormat.YV12;
+                            Log.d(TAG, "camera 0 Input PreSupFormat = " + getImageFormatString(InputCameraFormat0.intValue()));
+                            break;
+                        case 2:
+                            InputCameraFormat0 = ImageFormat.RGB_565;
+                            Log.d(TAG, "camera 0 Input PreSupFormat = " + getImageFormatString(InputCameraFormat0.intValue()));
+                            break;
+                        case 3:
+                            InputCameraFormat0 = ImageFormat.NV16;
+                            Log.d(TAG, "camera 0 Input PreSupFormat = " + getImageFormatString(InputCameraFormat0.intValue()));
+                            break;
+                        case 4:
+                            InputCameraFormat0 = ImageFormat.YUY2;
+                            Log.d(TAG, "camera 0 Input PreSupFormat = " + getImageFormatString(InputCameraFormat0.intValue()));
+                            break;
+                        case 5:
+                            InputCameraFormat0 = ImageFormat.YUV_420_888;
+                            Log.d(TAG, "camera 0 Input PreSupFormat = " + getImageFormatString(InputCameraFormat0.intValue()));
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case R.id.spinner9:
+                    switch (pos) {
+                        case 0:
+                            input_width1 = 640;
+                            input_height1 = 480;
+                            Log.d(TAG, "camera 1 Input PreviewSizes = " + input_width1 + "X" + input_height1);
+                            break;
+                        case 1:
+                            input_width1 = 720;
+                            input_height1 = 480;
+                            Log.d(TAG, "camera 1 Input PreviewSizes = " + input_width1 + "X" + input_height1);
+                            break;
+                        case 2:
+                            input_width1 = 720;
+                            input_height1 = 576;
+                            Log.d(TAG, "camera 1 Input PreviewSizes = " + input_width1 + "X" + input_height1);
+                            break;
+                        case 3:
+                            input_width1 = 800;
+                            input_height1 = 480;
+                            Log.d(TAG, "camera 1 Input PreviewSizes = " + input_width1 + "X" + input_height1);
+                            break;
+                        case 4:
+                            input_width1 = 1280;
+                            input_height1 = 720;
+                            Log.d(TAG, "camera 1 Input PreviewSizes = " + input_width1 + "X" + input_height1);
+                            break;
+                        case 5:
+                            input_width1 = 1920;
+                            input_height1 = 1080;
+                            Log.d(TAG, "camera 1 Input PreviewSizes = " + input_width1 + "X" + input_height1);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case R.id.spinner10:
+                    switch (pos) {
+                        case 0:
+                            InputCameraFormat1 = ImageFormat.NV21;
+                            Log.d(TAG, "camera 1 Input PreSupFormat = " + getImageFormatString(InputCameraFormat1.intValue()));
+                            break;
+                        case 1:
+                            InputCameraFormat1 = ImageFormat.YV12;
+                            Log.d(TAG, "camera 1 Input PreSupFormat = " + getImageFormatString(InputCameraFormat1.intValue()));
+                            break;
+                        case 2:
+                            InputCameraFormat1 = ImageFormat.RGB_565;
+                            Log.d(TAG, "camera 1 Input PreSupFormat = " + getImageFormatString(InputCameraFormat1.intValue()));
+                            break;
+                        case 3:
+                            InputCameraFormat1 = ImageFormat.NV16;
+                            Log.d(TAG, "camera 1 Input PreSupFormat = " + getImageFormatString(InputCameraFormat1.intValue()));
+                            break;
+                        case 4:
+                            InputCameraFormat1 = ImageFormat.YUY2;
+                            Log.d(TAG, "camera 1 Input PreSupFormat = " + getImageFormatString(InputCameraFormat1.intValue()));
+                            break;
+                        case 5:
+                            InputCameraFormat1 = ImageFormat.YUV_420_888;
+                            Log.d(TAG, "camera 1 Input PreSupFormat = " + getImageFormatString(InputCameraFormat1.intValue()));
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    Log.d(TAG, "default,default,default");
+                    break;
             }
+        }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // Another interface callback
-            }
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+            // Another interface callback
+        }
     }
 
-//permission strat
+    //permission strat
     protected void requestPermission(int id, String permission, Runnable allowableRunnable, Runnable disallowableRunnable) {
         if (allowableRunnable == null) {
             throw new IllegalArgumentException("allowableRunnable == null");
@@ -587,23 +734,30 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
         }
     }
 
-     /**
-      * @see android.graphics.ImageFormat
-      */
-        public static String getImageFormatString(int format) {
-            switch (format) {
-                case ImageFormat.JPEG: return "JPEG";
-                case ImageFormat.NV16: return "NV16";
-                case ImageFormat.NV21: return "NV21";
-                case ImageFormat.RGB_565: return "RGB_565";
-                case ImageFormat.YUY2: return "YUY2";
-                case ImageFormat.YV12: return "YV12";
-
-                case ImageFormat.UNKNOWN:
+    /**
+     * @see ImageFormat
+     */
+    public static String getImageFormatString(int format) {
+        switch (format) {
+            case ImageFormat.JPEG:
+                return "JPEG";
+            case ImageFormat.NV16:
+                return "NV16";
+            case ImageFormat.NV21:
+                return "NV21";
+            case ImageFormat.RGB_565:
+                return "RGB_565";
+            case ImageFormat.YUY2:
+                return "YUY2";
+            case ImageFormat.YV12:
+                return "YV12";
+            case ImageFormat.YUV_420_888:
+                return "YUV_420_888";
+            case ImageFormat.UNKNOWN:
             default:
-             return "UNKNOWN";
-            }
+                return "UNKNOWN";
         }
+    }
 
     public class MultiOpenCameraThread extends Thread {
 
@@ -635,10 +789,10 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                         //    Log.d(TAG, "Have no preview size parameters and use the default parameters.");
                         //    PreSupSize1 =  PreSupSizeList1.get(0);
                         //}
-                       for(int num=0; num<PreSupSizeList1.size(); num++) {
-                           PreSupSize1 =  PreSupSizeList1.get(num);
-                           Log.d(TAG, "PreviewSizes = " +PreSupSize1.width+ "X" + PreSupSize1.height);
-                       }
+                        for (int num = 0; num < PreSupSizeList1.size(); num++) {
+                            PreSupSize1 = PreSupSizeList1.get(num);
+                            Log.d(TAG, "camera PreviewSizes = " + PreSupSize1.width + "X" + PreSupSize1.height);
+                        }
 //                        PreSupFormatList1 = mParameters1.getSupportedPreviewFormats();
 //                        if(PreSupFormat1 == null){
 //                            Log.d(TAG, "Have no preview format parameters and use the default parameters.");
@@ -646,7 +800,7 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
 //                        }
 //                        for (int num=0; num<PreSupFormatList1.size(); num++) {
 //                            PreSupFormat1 = PreSupFormatList1.get(num);
-//                            Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat1.intValue()));
+//                            Log.d(TAG, "camera PreSupFormat = " + getImageFormatString(PreSupFormat1.intValue()));
 //                        }
                     }
                     if ((camera_id == 1)) {
@@ -658,7 +812,7 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                         //}
 //                        for(int num=0; num<PreSupSizeList2.size(); num++) {
 //                            PreSupSize2 =  PreSupSizeList2.get(num);
-//                            Log.d(TAG, "PreviewSizes = " +PreSupSize2.width+ "X" + PreSupSize2.height);
+//                            Log.d(TAG, "camera PreviewSizes = " +PreSupSize2.width+ "X" + PreSupSize2.height);
 //                        }
                         //PreSupFormatList2 = mParameters2.getSupportedPreviewFormats();
                         //if(PreSupFormat2 == null){
@@ -678,30 +832,43 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                     mSurfaceView[camera_id].getHolder().setFormat(PixelFormat.TRANSLUCENT);
                     mCamera[camera_id].setPreviewDisplay(mSurfaceView[camera_id].getHolder());
                     if (camera_id == 0) {
-                        if((width0 == 0)||(height0 == 0)){
+                        if ((width0 == 0) || (height0 == 0)) {
                             width0 = 1920;
                             height0 = 1080;
                         }
-                        if(PreSupFormat1 == null)
+                        if (PreSupFormat1 == null)
                             PreSupFormat1 = ImageFormat.NV21;
-                        Log.d(TAG, "camera preview size" + width0 + "X" + height0);
-                        //mParameters1.setPreviewSize(PreSupSize1.width,PreSupSize1.height);
-                        mParameters1.setPreviewSize((int)width0,(int)height0);
-                        mParameters1.set("CameraHalField",CameraHalField0);
+                        Log.d(TAG, "camera " + camera_id + " progressive = " + CameraHalField0);
+                        Log.d(TAG, "camera " + camera_id + " PreviewSizes = " + width0 + "X" + height0);
+                        Log.d(TAG, "camera " + camera_id + " PreSupFormat = " + getImageFormatString(PreSupFormat1.intValue()));
+                        Log.d(TAG, "camera " + camera_id + " Input PreviewSizes = " + input_width0 + "X" + input_height0); 
+                        Log.d(TAG, "camera " + camera_id + " Input PreSupFormat = " + getImageFormatString(InputCameraFormat0.intValue()));                       
+                        mParameters1.setPreviewSize((int) width0, (int) height0);
+                        mParameters1.set("CameraHalField", CameraHalField0);
+                        mParameters1.set("CameraHalInputWidth", input_width0);
+                        mParameters1.set("CameraHalInputHeight", input_height0);
+                        mParameters1.set("CameraHalInputFormat", getImageFormatString(InputCameraFormat0.intValue()));
                         mParameters1.setPreviewFormat(Integer.valueOf(PreSupFormat1.intValue()));
                         mCamera[camera_id].setParameters(mParameters1);
 
                     }
                     if (camera_id == 1) {
-                        if((width1 == 0)||(height1 == 0)){
+                        if ((width1 == 0) || (height1 == 0)) {
                             width1 = 1920;
                             height1 = 1080;
                         }
-                        if(PreSupFormat2 == null)
+                        if (PreSupFormat2 == null)
                             PreSupFormat2 = ImageFormat.NV21;
-                        Log.d(TAG, "camera preview size" + width1 + "X" + height1);
-                        mParameters2.setPreviewSize((int)width1,(int)height1);
-                        mParameters2.set("CameraHalField",CameraHalField1);
+                        Log.d(TAG, "camera " + camera_id + " progressive = " + CameraHalField0);
+                        Log.d(TAG, "camera " + camera_id + " PreviewSizes = " + width0 + "X" + height0);
+                        Log.d(TAG, "camera " + camera_id + " PreSupFormat = " + getImageFormatString(PreSupFormat1.intValue()));
+                        Log.d(TAG, "camera " + camera_id + " Input PreviewSizes = " + input_width0 + "X" + input_height0); 
+                        Log.d(TAG, "camera " + camera_id + " Input PreSupFormat = " + getImageFormatString(InputCameraFormat0.intValue()));                       
+                        mParameters2.setPreviewSize((int) width1, (int) height1);
+                        mParameters2.set("CameraHalField", CameraHalField1);
+                        mParameters1.set("CameraHalInputWidth", input_width1);
+                        mParameters1.set("CameraHalInputHeight", input_height1);
+                        mParameters1.set("CameraHalInputFormat", getImageFormatString(InputCameraFormat1.intValue()));
                         mParameters2.setPreviewFormat(Integer.valueOf(PreSupFormat2.intValue()));
                         mCamera[camera_id].setParameters(mParameters2);
                     }
@@ -766,7 +933,7 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                     e.printStackTrace();
                 }
             } else {
-                Log.d(TAG, "camera" + camera_id + "is not open");
+                Log.d(TAG, "camera " + camera_id + " is not open");
             }
         }
 
@@ -809,7 +976,7 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
      * previously scheduled calls.
      */
 /*
-	private void delayedHide(int delayMillis) {
+    private void delayedHide(int delayMillis) {
 		mHideHandler.removeCallbacks(mHideRunnable);
 		mHideHandler.postDelayed(mHideRunnable, delayMillis);
 	}
@@ -817,17 +984,13 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
     @Override
     protected void onStart() {
         Log.d(TAG, new Exception().getStackTrace()[0].getMethodName());
-        super.onStart();
+        super.onStart();// ATTENTION: This was auto-generated to implement the App Indexing API.
     }
 
     @Override
     protected void onResume() {
         Log.d(TAG, new Exception().getStackTrace()[0].getMethodName());
         super.onResume();
-        // open all camera
-        //for (int i = 0; i < Camera_num; i++) {
-        //    mOpenThread[i].start();
-        //}
     }
 
     @Override
@@ -835,7 +998,7 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
         Log.d(TAG, new Exception().getStackTrace()[0].getMethodName());
         super.onPause();
         try {
-            for (int i = 0; i < Camera_num; i++) {
+            for (int i = 0; i < 2; i++) {
                 mCloseThread[i].start();
             }
         } catch (Exception e) {
@@ -847,7 +1010,7 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
     @Override
     protected void onStop() {
         Log.d(TAG, new Exception().getStackTrace()[0].getMethodName());
-        super.onStop();
+        super.onStop();// ATTENTION: This was auto-generated to implement the App Indexing API.
     }
 
     @Override
@@ -866,16 +1029,20 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                     Toast.makeText(MultiCameraActivity.this, "camera 0 ON", 800).show();
                     Log.d(TAG, "ToggleButton camera 0 open");
                     mOpenThread[0].start();
-                    mCameraTestSpinner[0].setVisibility(0x00000004);
-                    mCameraTestSpinner[1].setVisibility(0x00000004);
-                    mCameraTestSpinner[2].setVisibility(0x00000004);
+                    mCameraTestSpinner[0].setClickable(false);
+                    mCameraTestSpinner[1].setClickable(false);
+                    mCameraTestSpinner[2].setClickable(false);
+                    mCameraTestSpinner[6].setClickable(false);
+                    mCameraTestSpinner[7].setClickable(false);
                 } else {
                     Toast.makeText(MultiCameraActivity.this, "camera 0 OFF", 800).show();
                     Log.d(TAG, "ToggleButton camera 0 close");
                     mCloseThread[0].start();
-                    mCameraTestSpinner[0].setVisibility(0x00000000);
-                    mCameraTestSpinner[1].setVisibility(0x00000000);
-                    mCameraTestSpinner[2].setVisibility(0x00000000);
+                    mCameraTestSpinner[0].setClickable(true);
+                    mCameraTestSpinner[1].setClickable(true);
+                    mCameraTestSpinner[2].setClickable(true);
+                    mCameraTestSpinner[6].setClickable(true);
+                    mCameraTestSpinner[7].setClickable(true);
                 }
             }
             break;
@@ -884,16 +1051,20 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                     Toast.makeText(MultiCameraActivity.this, "camera 1 ON", 800).show();
                     Log.d(TAG, "ToggleButton camera 1 open");
                     mOpenThread[1].start();
-                    mCameraTestSpinner[3].setVisibility(0x00000004);
-                    mCameraTestSpinner[4].setVisibility(0x00000004);
-                    mCameraTestSpinner[5].setVisibility(0x00000004);
-               } else {
+                    mCameraTestSpinner[3].setClickable(false);
+                    mCameraTestSpinner[4].setClickable(false);
+                    mCameraTestSpinner[5].setClickable(false);
+                    mCameraTestSpinner[8].setClickable(false);
+                    mCameraTestSpinner[9].setClickable(false);
+                } else {
                     Toast.makeText(MultiCameraActivity.this, "camera 1 OFF", 800).show();
                     Log.d(TAG, "ToggleButton camera 1 close");
                     mCloseThread[1].start();
-                    mCameraTestSpinner[3].setVisibility(0x00000000);
-                    mCameraTestSpinner[4].setVisibility(0x00000000);
-                    mCameraTestSpinner[5].setVisibility(0x00000000);
+                    mCameraTestSpinner[3].setClickable(true);
+                    mCameraTestSpinner[4].setClickable(true);
+                    mCameraTestSpinner[5].setClickable(true);
+                    mCameraTestSpinner[8].setClickable(true);
+                    mCameraTestSpinner[9].setClickable(true);
                 }
             }
             break;
@@ -901,304 +1072,5 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                 break;
         }
     }
-
-/*
-    public void onClick(View v) {
-        Log.d(TAG, new Exception().getStackTrace()[0].getMethodName());
-
-        switch (v.getId()) {
-            case R.id.button1: {
-                Log.d(TAG, "button1");
-                //PopupMenu pop1 = new PopupMenu(this, findViewById(R.id.button1));
-                //Menu menu1 = pop1.getMenu();
-                //if (PreSupSizeList1 == null)
-                //    break;
-                //for(int i=0; i<PreSupSizeList1.size(); i++) {
-                //    PreSupSize1 =  PreSupSizeList1.get(i);
-                //    menu1.add(0, Menu.FIRST + i, i, PreSupSize1.width+"X"+PreSupSize1.height);
-                //}
-                //pop.getMenuInflater().inflate(R.menu.popup_menu, pop.getMenu());
-                pop1 = new PopupMenu(this, findViewById(R.id.button1));
-                Menu menu1 = pop1.getMenu();
-                menu1.add(0, Menu.FIRST + 0, 0, "640X480");
-                menu1.add(0, Menu.FIRST + 1, 1, "720X480");
-                menu1.add(0, Menu.FIRST + 2, 2, "720X576");
-                menu1.add(0, Menu.FIRST + 3, 3, "800X480");
-                menu1.add(0, Menu.FIRST + 4, 4, "1280X720");
-                menu1.add(0, Menu.FIRST + 5, 5, "1920X1080");
-
-                pop1.show();
-                pop1.setOnMenuItemClickListener(MultiCameraActivity.this);
-            }
-            break;
-            case R.id.button2: {
-                Log.d(TAG, "button2");
-                //PopupMenu pop2 = new PopupMenu(this, findViewById(R.id.button2));
-                //Menu menu2 = pop2.getMenu();
-                //if (PreSupFormatList1 == null)
-                //    break;
-                //for (int i=0; i<PreSupFormatList1.size(); i++) {
-                //    PreSupFormat1 = PreSupFormatList1.get(i);
-                //    menu2.add(1, Menu.FIRST + i, i, getImageFormatString(PreSupFormat1.intValue()));
-                //}
-                //pop.getMenuInflater().inflate(R.menu.popup_menu, pop.getMenu());
-                pop2 = new PopupMenu(this, findViewById(R.id.button2));
-                Menu menu2 = pop2.getMenu();
-                menu2.add(1, Menu.FIRST + 0, 0, getImageFormatString(ImageFormat.NV21));
-                menu2.add(1, Menu.FIRST + 1, 1, getImageFormatString(ImageFormat.YV12));
-                menu2.add(1, Menu.FIRST + 2, 2, getImageFormatString(ImageFormat.RGB_565));
-                pop2.show();
-                pop2.setOnMenuItemClickListener(MultiCameraActivity.this);
-            }
-            break;
-
-		case R.id.button3:{
-                Log.d(TAG, "button3");
-                //pupMenu pop3 = new PopupMenu(this, findViewById(R.id.button3));
-                //nu menu3 = pop3.getMenu();
-                // (PreSupSizeList2 == null)
-                //  break;
-                //r(int i=0; i<PreSupSizeList2.size(); i++) {
-                //  PreSupSize2 =  PreSupSizeList2.get(i);
-                //  menu3.add(2, Menu.FIRST + i, i, PreSupSize2.width+"X"+PreSupSize2.height);
-                //
-                //pop.getMenuInflater().inflate(R.menu.popup_menu, pop.getMenu());
-                pop3 = new PopupMenu(this, findViewById(R.id.button3));
-                Menu menu3 = pop3.getMenu();
-                menu3.add(2, Menu.FIRST + 0, 0, "640X480");
-                menu3.add(2, Menu.FIRST + 1, 1, "720X480");
-                menu3.add(2, Menu.FIRST + 2, 2, "720X576");
-                menu3.add(2, Menu.FIRST + 3, 3, "800X480");
-                menu3.add(2, Menu.FIRST + 4, 4, "1280X720");
-                menu3.add(2, Menu.FIRST + 5, 5, "1920X1080");
-
-                pop3.show();
-                pop3.setOnMenuItemClickListener(MultiCameraActivity.this);
-		}
-		break;
-		case R.id.button4:{
-                Log.d(TAG, "button4");
-                //PopupMenu pop4 = new PopupMenu(this, findViewById(R.id.button4));
-                //Menu menu4 = pop4.getMenu();
-                //if (PreSupFormatList2 == null)
-                //    break;
-                //for (int i=0; i<PreSupFormatList2.size(); i++) {
-                //    PreSupFormat1 = PreSupFormatList2.get(i);
-                //    menu4.add(3, Menu.FIRST + i, i, getImageFormatString(PreSupFormat2.intValue()));
-                //}
-                //pop.getMenuInflater().inflate(R.menu.popup_menu, pop.getMenu());
-                pop4 = new PopupMenu(this, findViewById(R.id.button4));
-                Menu menu4 = pop4.getMenu();
-                menu4.add(3, Menu.FIRST + 0, 0, getImageFormatString(ImageFormat.NV21));
-                menu4.add(3, Menu.FIRST + 1, 1, getImageFormatString(ImageFormat.YV12));
-                menu4.add(3, Menu.FIRST + 2, 2, getImageFormatString(ImageFormat.RGB_565));
-                pop4.show();
-                pop4.setOnMenuItemClickListener(MultiCameraActivity.this);
-		}
-		break;
-		case R.id.button5:{
-                Log.d(TAG, "button5");
-                pop5 = new PopupMenu(this, findViewById(R.id.button5));
-                Menu menu5 = pop5.getMenu();
-                menu5.add(4, Menu.FIRST + 0, 0, "progressive");
-                menu5.add(4, Menu.FIRST + 1, 1, "interlaced");
-                pop5.show();
-                pop5.setOnMenuItemClickListener(MultiCameraActivity.this);
-		}
-		break;
-		case R.id.button6:{
-                Log.d(TAG, "button6");
-                pop6 = new PopupMenu(this, findViewById(R.id.button6));
-                Menu menu6 = pop6.getMenu();
-                menu6.add(5, Menu.FIRST + 0, 0, "progressive");
-                menu6.add(5, Menu.FIRST + 1, 1, "interlaced");
-                pop6.show();
-                pop6.setOnMenuItemClickListener(MultiCameraActivity.this);
-		}
-		break;
-        default:
-            break;
-        }
-    }
-
-    public boolean onMenuItemClick(MenuItem arg0) {
-        // TODO Auto-generated method stub
-        switch (arg0.getGroupId()){
-            case 0:
-                //Log.d(TAG, "PreviewSizes id = " +(arg0.getItemId()-1) + "PreSupSizeList1 = " + PreSupSizeList1.size());
-                //PreSupSize1 =  PreSupSizeList1.get(arg0.getItemId()-1);
-                //Log.d(TAG, "PreviewSizes = " +PreSupSize1.width+ "X" + PreSupSize1.height);
-                //Toast.makeText(this, "set camera 0/1 PreviewSizes = "+PreSupSize1.width+"X"+PreSupSize1.height,Toast.LENGTH_LONG).show();
-                switch (arg0.getItemId()){
-                    case Menu.FIRST + 0:
-                        width0 = 640;
-                        height0 = 480;
-                        Log.d(TAG, "PreviewSizes = " +width0+ "X" + height0);
-                        Toast.makeText(this, "set camera 0 PreviewSizes = "+ width0+"X"+ height0,Toast.LENGTH_LONG).show();
-                        break;
-                    case Menu.FIRST + 1:
-                        width0 = 720;
-                        height0 = 480;
-                        Log.d(TAG, "PreviewSizes = " +width0+ "X" + height0);
-                        Toast.makeText(this, "set camera 0 PreviewSizes = "+ width0+"X"+ height0,Toast.LENGTH_LONG).show();
-                        break;
-                    case Menu.FIRST + 2:
-                        width0 = 720;
-                        height0 = 576;
-                        Log.d(TAG, "PreviewSizes = " +width0+ "X" + height0);
-                        Toast.makeText(this, "set camera 0 PreviewSizes = "+ width0+"X"+ height0,Toast.LENGTH_LONG).show();
-                        break;
-                    case Menu.FIRST + 3:
-                        width0 = 800;
-                        height0 = 480;
-                        Log.d(TAG, "PreviewSizes = " +width0+ "X" + height0);
-                        Toast.makeText(this, "set camera 0 PreviewSizes = "+ width0+"X"+ height0,Toast.LENGTH_LONG).show();
-                        break;
-                    case Menu.FIRST + 4:
-                        width0 = 1280;
-                        height0 = 720;
-                        Log.d(TAG, "PreviewSizes = " +width0+ "X" + height0);
-                        Toast.makeText(this, "set camera 0 PreviewSizes = "+ width0+"X"+ height0,Toast.LENGTH_LONG).show();
-                        break;
-                    case Menu.FIRST + 5:
-                        width0 = 1920;
-                        height0 = 1080;
-                        Log.d(TAG, "PreviewSizes = " +width0+ "X" + height0);
-                        Toast.makeText(this, "set camera 0 PreviewSizes = "+ width0+"X"+ height0,Toast.LENGTH_LONG).show();
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case 1:
-                //Log.d(TAG, "PreSupFormat id = " +(arg0.getItemId()-1) + "PreSupFormatList1 = " + PreSupSizeList1.size());
-                //PreSupFormat1 = PreSupFormatList1.get(arg0.getItemId()-1);
-                //Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat1.intValue()));
-                //Toast.makeText(this, "set camera 0/1 PreviewFormat = "+getImageFormatString(PreSupFormat1.intValue()),Toast.LENGTH_LONG).show();
-                switch (arg0.getItemId()){
-                    case Menu.FIRST + 0:
-                        PreSupFormat1 = ImageFormat.NV21;
-                        Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat1.intValue()));
-                        Toast.makeText(this, "set camera 0 PreviewFormat = "+getImageFormatString(PreSupFormat1.intValue()),Toast.LENGTH_LONG).show();
-                        break;
-                    case Menu.FIRST + 1:
-                        PreSupFormat1 = ImageFormat.YV12;
-                        Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat1.intValue()));
-                        Toast.makeText(this, "set camera 0 PreviewFormat = "+getImageFormatString(PreSupFormat1.intValue()),Toast.LENGTH_LONG).show();
-                        break;
-                    case Menu.FIRST + 2:
-                        PreSupFormat1 = ImageFormat.RGB_565;
-                        Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat1.intValue()));
-                        Toast.makeText(this, "set camera 0 PreviewFormat = "+getImageFormatString(PreSupFormat1.intValue()),Toast.LENGTH_LONG).show();
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case 2:
-
-                switch (arg0.getItemId()){
-                    case Menu.FIRST + 0:
-                        width1 = 640;
-                        height1 = 480;
-                        Log.d(TAG, "PreviewSizes = " +width1+ "X" + height1);
-                        Toast.makeText(this, "set camera 1 PreviewSizes = "+ width1+"X"+ height1,Toast.LENGTH_LONG).show();
-                        break;
-                    case Menu.FIRST + 1:
-                        width1 = 720;
-                        height1 = 480;
-                        Log.d(TAG, "PreviewSizes = " +width1+ "X" + height1);
-                        Toast.makeText(this, "set camera 1 PreviewSizes = "+ width1+"X"+ height1,Toast.LENGTH_LONG).show();
-                        break;
-                    case Menu.FIRST + 2:
-                        width1 = 720;
-                        height1 = 576;
-                        Log.d(TAG, "PreviewSizes = " +width1+ "X" + height1);
-                        Toast.makeText(this, "set camera 1 PreviewSizes = "+ width1+"X"+ height1,Toast.LENGTH_LONG).show();
-                        break;
-                    case Menu.FIRST + 3:
-                        width1 = 800;
-                        height1 = 480;
-                        Log.d(TAG, "PreviewSizes = " +width1+ "X" + height1);
-                        Toast.makeText(this, "set camera 1 PreviewSizes = "+ width1+"X"+ height1,Toast.LENGTH_LONG).show();
-                        break;
-                    case Menu.FIRST + 4:
-                        width1 = 1280;
-                        height1 = 720;
-                        Log.d(TAG, "PreviewSizes = " +width1+ "X" + height1);
-                        Toast.makeText(this, "set camera 1 PreviewSizes = "+ width1+"X"+ height1,Toast.LENGTH_LONG).show();
-                        break;
-                    case Menu.FIRST + 5:
-                        width1 = 1920;
-                        height1 = 1080;
-                        Log.d(TAG, "PreviewSizes = " +width1+ "X" + height1);
-                        Toast.makeText(this, "set camera 1 PreviewSizes = "+ width1+"X"+ height1,Toast.LENGTH_LONG).show();
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case 3:
-                switch (arg0.getItemId()){
-                    case Menu.FIRST + 0:
-                        PreSupFormat2 = ImageFormat.NV21;
-                        Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat2.intValue()));
-                        Toast.makeText(this, "set camera 1 PreviewFormat = "+getImageFormatString(PreSupFormat2.intValue()),Toast.LENGTH_LONG).show();
-                        break;
-                    case Menu.FIRST + 1:
-                        PreSupFormat2 = ImageFormat.YV12;
-                        Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat2.intValue()));
-                        Toast.makeText(this, "set camera 1 PreviewFormat = "+getImageFormatString(PreSupFormat2.intValue()),Toast.LENGTH_LONG).show();
-                        break;
-                    case Menu.FIRST + 2:
-                        PreSupFormat2 = ImageFormat.RGB_565;
-                        Log.d(TAG, "PreSupFormat = " + getImageFormatString(PreSupFormat2.intValue()));
-                        Toast.makeText(this, "set camera 1 PreviewFormat = "+getImageFormatString(PreSupFormat2.intValue()),Toast.LENGTH_LONG).show();
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case 4:
-                switch (arg0.getItemId()){
-                    case Menu.FIRST + 0:
-                        CameraHalField0 = 0;
-                        Log.d(TAG, "progressive = " + CameraHalField0);
-                        Toast.makeText(this, "set camera 0 CameraHalField = "+CameraHalField0,Toast.LENGTH_LONG).show();
-                        break;
-                    case Menu.FIRST + 1:
-                        CameraHalField0 = 1;
-                        Log.d(TAG, "interlaced = " + CameraHalField0);
-                        Toast.makeText(this, "set camera 0 CameraHalField = "+CameraHalField0,Toast.LENGTH_LONG).show();
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case 5:
-                switch (arg0.getItemId()){
-                    case Menu.FIRST + 0:
-                        CameraHalField1 = 0;
-                        Log.d(TAG, "progressive = " + CameraHalField1);
-                        Toast.makeText(this, "set camera 1 CameraHalField = "+CameraHalField1,Toast.LENGTH_LONG).show();
-                        break;
-                    case Menu.FIRST + 1:
-                        CameraHalField1 = 1;
-                        Log.d(TAG, "interlaced = " + CameraHalField1);
-                        Toast.makeText(this, "set camera 1 CameraHalField = "+CameraHalField1,Toast.LENGTH_LONG).show();
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            default:
-                break;
-        }
-
-        return false;
-    }
-
-*/
-
 
 }

@@ -7,6 +7,10 @@
     <string name="button4">camera3</string>
     <string name="button5">camera4</string>
     <string name="button6">camera5</string>
+    <string name="textview1">camera0 output:</string>
+    <string name="textview2">camera0 input:</string>
+    <string name="textview3">camera1 output:</string>
+    <string name="textview4">camera1 input:</string>
     <string name="dummy_content">MULTI\nCAMERA</string>
     <string-array name="camera0_hal_field">
         <item>progressive</item>
@@ -38,6 +42,7 @@
         <item>RGB_565</item>
         <item>NV16 </item>
         <item>YUY2</item>
+        <item>YUV_420_888</item>
     </string-array>
     <string-array name="camera1_image_format">
         <item>NV21</item>
@@ -45,6 +50,39 @@
         <item>RGB_565</item>
         <item>NV16 </item>
         <item>YUY2</item>
+        <item>YUV_420_888</item>
+    </string-array>
+    <string-array name="camera0_preview_size_input">
+        <item>640X480</item>
+        <item>720X480 </item>
+        <item>720X576</item>
+        <item>800X480</item>
+        <item>1280X720</item>
+        <item>1920X1080</item>
+    </string-array>
+    <string-array name="camera1_preview_size_input">
+        <item>640X480</item>
+        <item>720X480 </item>
+        <item>720X576</item>
+        <item>800X480</item>
+        <item>1280X720</item>
+        <item>1920X1080</item>
+    </string-array>
+    <string-array name="camera0_image_format_input">
+        <item>NV21</item>
+        <item>YV12 </item>
+        <item>RGB_565</item>
+        <item>NV16 </item>
+        <item>YUY2</item>
+        <item>YUV_420_888</item>
+    </string-array>
+    <string-array name="camera1_image_format_input">
+        <item>NV21</item>
+        <item>YV12 </item>
+        <item>RGB_565</item>
+        <item>NV16 </item>
+        <item>YUY2</item>
+        <item>YUV_420_888</item>
     </string-array>
 
 </resources>

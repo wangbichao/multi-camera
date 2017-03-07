@@ -64,122 +64,202 @@
                 android:orientation="horizontal"
                 android:layout_weight="1">
 
-                <SurfaceView
-                    android:id="@+id/surfaceView1"
-                    android:layout_marginLeft="200dp"
-                    android:layout_marginRight="200dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1" />
-
-                <ToggleButton
-                    android:id="@+id/togglebutton1"
-                    android:layout_marginTop="150dp"
-                    android:layout_marginLeft="50dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textOn="Camera0:ON"
-                    android:textOff="Camera0:OFF"
-                    android:checked="false"/>
-
-                <Spinner
-                    android:id="@+id/spinner1"
-                    android:layout_marginTop="1dp"
-                    android:layout_marginLeft="50dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:entries="@array/camera0_hal_field"
-                    />
-
-                <Spinner
-                    android:id="@+id/spinner2"
-                    android:layout_marginTop="50dp"
-                    android:layout_marginLeft="50dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:entries="@array/camera0_preview_size"
-                    />
-
-                <Spinner
-                    android:id="@+id/spinner3"
-                    android:layout_marginTop="100dp"
-                    android:layout_marginLeft="50dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:entries="@array/camera0_image_format"
-                    />
-
-            </RelativeLayout>
-
-            <LinearLayout
+            <SurfaceView
+                android:id="@+id/surfaceView1"
+                android:layout_marginLeft="200dp"
+                android:layout_marginRight="200dp"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="0.01"
-                android:orientation="horizontal" >
-            </LinearLayout>
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="horizontal" >
+            <ToggleButton
+                android:id="@+id/togglebutton1"
+                android:layout_marginTop="180dp"
+                android:layout_marginLeft="40dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textOn="Camera0:ON"
+                android:textOff="Camera0:OFF"
+                android:checked="false"/>
 
-                <SurfaceView
-                    android:id="@+id/surfaceView2"
-                    android:layout_marginLeft="200dp"
-                    android:layout_marginRight="200dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1" />
+            <TextView
+                android:id="@+id/textview1"
+                android:layout_marginTop="1dp"
+                android:layout_marginLeft="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:text="@string/textview1"
+                android:textColor="@drawable/white"
+                />
 
-                <ToggleButton
-                    android:id="@+id/togglebutton2"
-                    android:layout_marginTop="150dp"
-                    android:layout_marginLeft="50dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textOn="Camera1:ON"
-                    android:textOff="Camera1:OFF"
-                    android:checked="false"/>
+            <Spinner
+                android:id="@+id/spinner1"
+                android:layout_marginTop="30dp"
+                android:layout_marginLeft="40dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:entries="@array/camera0_hal_field"
+                />
 
-                <Spinner
-                    android:id="@+id/spinner4"
-                    android:layout_marginTop="1dp"
-                    android:layout_marginLeft="50dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:entries="@array/camera1_hal_field"
-                    />
+            <Spinner
+                android:id="@+id/spinner2"
+                android:layout_marginTop="80dp"
+                android:layout_marginLeft="40dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:entries="@array/camera0_preview_size"
+                />
 
-                <Spinner
-                    android:id="@+id/spinner5"
-                    android:layout_marginTop="50dp"
-                    android:layout_marginLeft="50dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:entries="@array/camera1_preview_size"
-                    />
+            <Spinner
+                android:id="@+id/spinner3"
+                android:layout_marginTop="130dp"
+                android:layout_marginLeft="40dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:entries="@array/camera0_image_format"
+                />
 
-                <Spinner
-                    android:id="@+id/spinner6"
-                    android:layout_marginTop="100dp"
-                    android:layout_marginLeft="50dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:entries="@array/camera1_image_format"
-                    />
+            <TextView
+                android:id="@+id/textview2"
+                android:layout_marginTop="1dp"
+                android:layout_marginLeft="1085dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:text="@string/textview2"
+                android:textColor="@drawable/white"
+                />
 
-            </RelativeLayout>
+            <Spinner
+                android:id="@+id/spinner7"
+                android:layout_marginTop="30dp"
+                android:layout_marginLeft="1110dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:entries="@array/camera0_preview_size_input"
+                />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="0.01"
-                android:orientation="horizontal" >
-            </LinearLayout>
-            
+            <Spinner
+                android:id="@+id/spinner8"
+                android:layout_marginTop="80dp"
+                android:layout_marginLeft="1110dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:entries="@array/camera0_image_format_input"
+                />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.01"
+            android:orientation="horizontal" >
         </LinearLayout>
 
-    </FrameLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal" >
+
+            <SurfaceView
+                android:id="@+id/surfaceView2"
+                android:layout_marginLeft="200dp"
+                android:layout_marginRight="200dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <ToggleButton
+                android:id="@+id/togglebutton2"
+                android:layout_marginTop="180dp"
+                android:layout_marginLeft="40dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textOn="Camera1:ON"
+                android:textOff="Camera1:OFF"
+                android:checked="false"/>
+
+            <TextView
+                android:id="@+id/textview3"
+                android:layout_marginTop="1dp"
+                android:layout_marginLeft="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:text="@string/textview3"
+                android:textColor="@drawable/white"
+                />
+
+            <Spinner
+                android:id="@+id/spinner4"
+                android:layout_marginTop="30dp"
+                android:layout_marginLeft="40dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:entries="@array/camera1_hal_field"
+                />
+
+            <Spinner
+                android:id="@+id/spinner5"
+                android:layout_marginTop="80dp"
+                android:layout_marginLeft="40dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:entries="@array/camera1_preview_size"
+                />
+
+            <Spinner
+                android:id="@+id/spinner6"
+                android:layout_marginTop="130dp"
+                android:layout_marginLeft="40dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:entries="@array/camera1_image_format"
+                />
+
+            <TextView
+                android:id="@+id/textview4"
+                android:layout_marginTop="1dp"
+                android:layout_marginLeft="1085dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:text="@string/textview4"
+                android:textColor="@drawable/white"
+                />
+
+            <Spinner
+                android:id="@+id/spinner9"
+                android:layout_marginTop="30dp"
+                android:layout_marginLeft="1110dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:entries="@array/camera1_preview_size_input"
+                />
+
+            <Spinner
+                android:id="@+id/spinner10"
+                android:layout_marginTop="80dp"
+                android:layout_marginLeft="1110dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:entries="@array/camera1_image_format_input"
+                />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.01"
+            android:orientation="horizontal" >
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>
 
 </FrameLayout>
