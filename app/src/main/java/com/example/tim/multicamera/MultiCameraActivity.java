@@ -1028,7 +1028,7 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                 if (isChecked) {
                     Toast.makeText(MultiCameraActivity.this, "camera 0 ON", 800).show();
                     Log.d(TAG, "ToggleButton camera 0 open");
-                    mOpenThread[0].start();
+                    new MultiOpenCameraThread(0).start();
                     mCameraTestSpinner[0].setClickable(false);
                     mCameraTestSpinner[1].setClickable(false);
                     mCameraTestSpinner[2].setClickable(false);
@@ -1037,7 +1037,7 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                 } else {
                     Toast.makeText(MultiCameraActivity.this, "camera 0 OFF", 800).show();
                     Log.d(TAG, "ToggleButton camera 0 close");
-                    mCloseThread[0].start();
+                    new MultiCloseCameraThread(0).start();
                     mCameraTestSpinner[0].setClickable(true);
                     mCameraTestSpinner[1].setClickable(true);
                     mCameraTestSpinner[2].setClickable(true);
@@ -1050,7 +1050,7 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                 if (isChecked) {
                     Toast.makeText(MultiCameraActivity.this, "camera 1 ON", 800).show();
                     Log.d(TAG, "ToggleButton camera 1 open");
-                    mOpenThread[1].start();
+                    new MultiOpenCameraThread(1).start();
                     mCameraTestSpinner[3].setClickable(false);
                     mCameraTestSpinner[4].setClickable(false);
                     mCameraTestSpinner[5].setClickable(false);
@@ -1059,7 +1059,7 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                 } else {
                     Toast.makeText(MultiCameraActivity.this, "camera 1 OFF", 800).show();
                     Log.d(TAG, "ToggleButton camera 1 close");
-                    mCloseThread[1].start();
+                    new MultiCloseCameraThread(1).start();
                     mCameraTestSpinner[3].setClickable(true);
                     mCameraTestSpinner[4].setClickable(true);
                     mCameraTestSpinner[5].setClickable(true);
