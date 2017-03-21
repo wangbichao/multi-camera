@@ -69,20 +69,12 @@
         <item>1920X1080</item>
     </string-array>
     <string-array name="camera0_image_format_input">
-        <item>NV21</item>
-        <item>YV12 </item>
-        <item>RGB_565</item>
-        <item>NV16 </item>
+        <item>DEFAULT</item>
         <item>YUY2</item>
-        <item>YUV_420_888</item>
     </string-array>
     <string-array name="camera1_image_format_input">
-        <item>NV21</item>
-        <item>YV12 </item>
-        <item>RGB_565</item>
-        <item>NV16 </item>
+        <item>DEFAULT</item>
         <item>YUY2</item>
-        <item>YUV_420_888</item>
     </string-array>
 
 </resources>

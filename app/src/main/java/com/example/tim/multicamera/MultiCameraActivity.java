@@ -103,6 +103,8 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.graphics.ImageFormat;
 
+import static java.sql.Types.NULL;
+
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
@@ -591,27 +593,11 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                 case R.id.spinner8:
                     switch (pos) {
                         case 0:
-                            InputCameraFormat0 = ImageFormat.NV21;
-                            Log.d(TAG, "camera 0 Input PreSupFormat = " + getImageFormatString(InputCameraFormat0.intValue()));
+                            InputCameraFormat0 = NULL;
+                            Log.d(TAG, "camera 0 Input PreSupFormat Default" );
                             break;
                         case 1:
-                            InputCameraFormat0 = ImageFormat.YV12;
-                            Log.d(TAG, "camera 0 Input PreSupFormat = " + getImageFormatString(InputCameraFormat0.intValue()));
-                            break;
-                        case 2:
-                            InputCameraFormat0 = ImageFormat.RGB_565;
-                            Log.d(TAG, "camera 0 Input PreSupFormat = " + getImageFormatString(InputCameraFormat0.intValue()));
-                            break;
-                        case 3:
-                            InputCameraFormat0 = ImageFormat.NV16;
-                            Log.d(TAG, "camera 0 Input PreSupFormat = " + getImageFormatString(InputCameraFormat0.intValue()));
-                            break;
-                        case 4:
                             InputCameraFormat0 = ImageFormat.YUY2;
-                            Log.d(TAG, "camera 0 Input PreSupFormat = " + getImageFormatString(InputCameraFormat0.intValue()));
-                            break;
-                        case 5:
-                            InputCameraFormat0 = ImageFormat.YUV_420_888;
                             Log.d(TAG, "camera 0 Input PreSupFormat = " + getImageFormatString(InputCameraFormat0.intValue()));
                             break;
                         default:
@@ -657,27 +643,15 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                 case R.id.spinner10:
                     switch (pos) {
                         case 0:
-                            InputCameraFormat1 = ImageFormat.NV21;
-                            Log.d(TAG, "camera 1 Input PreSupFormat = " + getImageFormatString(InputCameraFormat1.intValue()));
+                            InputCameraFormat1 = NULL;
+                            input_width0 = 0;
+                            input_height0 = 0;
+                            input_width0 = 0;
+                            input_height0 = 0;
+                            Log.d(TAG, "camera 1 Input PreSupFormat Default" );
                             break;
                         case 1:
-                            InputCameraFormat1 = ImageFormat.YV12;
-                            Log.d(TAG, "camera 1 Input PreSupFormat = " + getImageFormatString(InputCameraFormat1.intValue()));
-                            break;
-                        case 2:
-                            InputCameraFormat1 = ImageFormat.RGB_565;
-                            Log.d(TAG, "camera 1 Input PreSupFormat = " + getImageFormatString(InputCameraFormat1.intValue()));
-                            break;
-                        case 3:
-                            InputCameraFormat1 = ImageFormat.NV16;
-                            Log.d(TAG, "camera 1 Input PreSupFormat = " + getImageFormatString(InputCameraFormat1.intValue()));
-                            break;
-                        case 4:
                             InputCameraFormat1 = ImageFormat.YUY2;
-                            Log.d(TAG, "camera 1 Input PreSupFormat = " + getImageFormatString(InputCameraFormat1.intValue()));
-                            break;
-                        case 5:
-                            InputCameraFormat1 = ImageFormat.YUV_420_888;
                             Log.d(TAG, "camera 1 Input PreSupFormat = " + getImageFormatString(InputCameraFormat1.intValue()));
                             break;
                         default:
