@@ -593,6 +593,8 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                 case R.id.spinner8:
                     switch (pos) {
                         case 0:
+                            input_width0 = 0;
+                            input_height0 = 0;
                             InputCameraFormat0 = NULL;
                             Log.d(TAG, "camera 0 Input PreSupFormat Default" );
                             break;
@@ -644,10 +646,8 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                     switch (pos) {
                         case 0:
                             InputCameraFormat1 = NULL;
-                            input_width0 = 0;
-                            input_height0 = 0;
-                            input_width0 = 0;
-                            input_height0 = 0;
+                            input_width1 = 0;
+                            input_height1 = 0;
                             Log.d(TAG, "camera 1 Input PreSupFormat Default" );
                             break;
                         case 1:
@@ -840,9 +840,9 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                         Log.d(TAG, "camera " + camera_id + " Input PreSupFormat = " + getImageFormatString(InputCameraFormat0.intValue()));                       
                         mParameters2.setPreviewSize((int) width1, (int) height1);
                         mParameters2.set("CameraHalField", CameraHalField1);
-                        mParameters1.set("CameraHalInputWidth", input_width1);
-                        mParameters1.set("CameraHalInputHeight", input_height1);
-                        mParameters1.set("CameraHalInputFormat", getImageFormatString(InputCameraFormat1.intValue()));
+                        mParameters2.set("CameraHalInputWidth", input_width1);
+                        mParameters2.set("CameraHalInputHeight", input_height1);
+                        mParameters2.set("CameraHalInputFormat", getImageFormatString(InputCameraFormat1.intValue()));
                         mParameters2.setPreviewFormat(Integer.valueOf(PreSupFormat2.intValue()));
                         mCamera[camera_id].setParameters(mParameters2);
                     }
