@@ -187,6 +187,9 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
     private int input_height1;
     private Integer InputCameraFormat0;
     private Integer InputCameraFormat1;
+    private int deinterlaced_flag0;
+    private int deinterlaced_flag1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -211,7 +214,7 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
 
 //        CAMERA_INITED = new boolean[MAX_CAMERA];
 //        mCameraTestButton = new Button[MAX_CAMERA];
-        mCameraTestSpinner = new Spinner[10];
+        mCameraTestSpinner = new Spinner[12];
         mSurfaceView = new SurfaceView[MAX_CAMERA];
         mCamera = new Camera[MAX_CAMERA];
         mOpenThread = new MultiOpenCameraThread[MAX_CAMERA];
@@ -246,6 +249,10 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
         mCameraTestSpinner[7] = (Spinner) findViewById(R.id.spinner8);
         mCameraTestSpinner[8] = (Spinner) findViewById(R.id.spinner9);
         mCameraTestSpinner[9] = (Spinner) findViewById(R.id.spinner10);
+        mCameraTestSpinner[10] = (Spinner) findViewById(R.id.spinner11);
+        mCameraTestSpinner[11] = (Spinner) findViewById(R.id.spinner12);
+
+
 
 //        for (int i = 0; i < MAX_CAMERA; i++) {
 //            mCameraTestButton[i].setOnClickListener(this);
@@ -265,7 +272,7 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
             mCloseThread[i] = new MultiCloseCameraThread(i);
         }
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 12; i++) {
             mCameraTestSpinner[i].setOnItemSelectedListener(new SpinnerSelectedListener());
         }
 
@@ -397,12 +404,12 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                 case R.id.spinner1:
                     switch (pos) {
                         case 0:
-                            CameraHalField0 = 0;
-                            Log.d(TAG, "camera 0 progressive = " + CameraHalField0);
+                         //   CameraHalField0 = 0;
+                         //   Log.d(TAG, "camera 0 progressive = " + CameraHalField0);
                             break;
                         case 1:
-                            CameraHalField0 = 1;
-                            Log.d(TAG, "camera 0 interlaced = " + CameraHalField0);
+                         //   CameraHalField0 = 1;
+                         //   Log.d(TAG, "camera 0 interlaced = " + CameraHalField0);
                             break;
                         default:
                             break;
@@ -436,8 +443,18 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                             Log.d(TAG, "camera 0 PreviewSizes = " + width0 + "X" + height0);
                             break;
                         case 5:
+                            width0 = 1440;
+                            height0 = 960;
+                            Log.d(TAG, "camera 0 PreviewSizes = " + width0 + "X" + height0);
+                            break;
+                        case 6:
                             width0 = 1920;
                             height0 = 1080;
+                            Log.d(TAG, "camera 0 PreviewSizes = " + width0 + "X" + height0);
+                            break;
+                        case 7:
+                            width0 = 3840;
+                            height0 = 2160;
                             Log.d(TAG, "camera 0 PreviewSizes = " + width0 + "X" + height0);
                             break;
                         default:
@@ -516,9 +533,19 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                             Log.d(TAG, "camera 1 PreviewSizes = " + width1 + "X" + height1);
                             break;
                         case 5:
+                            width1 = 1440;
+                            height1 = 960;
+                            Log.d(TAG, "camera 1 PreviewSizes = " + width1 + "X" + height1);
+                            break;
+                        case 6:
                             width1 = 1920;
                             height1 = 1080;
                             Log.d(TAG, "camera 1 PreviewSizes = " + width1 + "X" + height1);
+                            break;
+                        case 7:
+                            width1 = 3840;
+                            height1 = 2160;
+                            Log.d(TAG, "camera 0 PreviewSizes = " + width0 + "X" + height0);
                             break;
                         default:
                             break;
@@ -593,14 +620,14 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                 case R.id.spinner8:
                     switch (pos) {
                         case 0:
-                            input_width0 = 0;
-                            input_height0 = 0;
-                            InputCameraFormat0 = NULL;
-                            Log.d(TAG, "camera 0 Input PreSupFormat Default" );
+                         //   input_width0 = 0;
+                         //   input_height0 = 0;
+                         //   InputCameraFormat0 = NULL;
+                         //   Log.d(TAG, "camera 0 Input PreSupFormat Default" );
                             break;
                         case 1:
-                            InputCameraFormat0 = ImageFormat.YUY2;
-                            Log.d(TAG, "camera 0 Input PreSupFormat = " + getImageFormatString(InputCameraFormat0.intValue()));
+                         //   InputCameraFormat0 = ImageFormat.YUY2;
+                         //   Log.d(TAG, "camera 0 Input PreSupFormat = " + getImageFormatString(InputCameraFormat0.intValue()));
                             break;
                         default:
                             break;
@@ -645,14 +672,42 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                 case R.id.spinner10:
                     switch (pos) {
                         case 0:
-                            InputCameraFormat1 = NULL;
-                            input_width1 = 0;
-                            input_height1 = 0;
+                         //   InputCameraFormat1 = NULL;
+                         //   input_width1 = 0;
+                         //   input_height1 = 0;
                             Log.d(TAG, "camera 1 Input PreSupFormat Default" );
                             break;
                         case 1:
-                            InputCameraFormat1 = ImageFormat.YUY2;
-                            Log.d(TAG, "camera 1 Input PreSupFormat = " + getImageFormatString(InputCameraFormat1.intValue()));
+                         //   InputCameraFormat1 = ImageFormat.YUY2;
+                         //   Log.d(TAG, "camera 1 Input PreSupFormat = " + getImageFormatString(InputCameraFormat1.intValue()));
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case R.id.spinner11:
+                    switch (pos) {
+                        case 0:
+                            deinterlaced_flag0 = 0;
+                            Log.d(TAG, "camera 0 CameraHalDeinterlaced = " + deinterlaced_flag0);
+                            break;
+                        case 1:
+                            deinterlaced_flag0 = 1;
+                            Log.d(TAG, "camera 0 CameraHalDeinterlaced = " + deinterlaced_flag0);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case R.id.spinner12:
+                    switch (pos) {
+                        case 0:
+                            deinterlaced_flag1 = 0;
+                            Log.d(TAG, "camera 1 CameraHalDeinterlaced = " + deinterlaced_flag1);
+                            break;
+                        case 1:
+                            deinterlaced_flag1 = 1;
+                            Log.d(TAG, "camera 1 CameraHalDeinterlaced = " + deinterlaced_flag1);
                             break;
                         default:
                             break;
@@ -817,8 +872,10 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                         Log.d(TAG, "camera " + camera_id + " PreSupFormat = " + getImageFormatString(PreSupFormat1.intValue()));
                         Log.d(TAG, "camera " + camera_id + " Input PreviewSizes = " + input_width0 + "X" + input_height0); 
                         Log.d(TAG, "camera " + camera_id + " Input PreSupFormat = " + getImageFormatString(InputCameraFormat0.intValue()));                       
+                        Log.d(TAG, "camera " + camera_id + " CameraHalDeinterlaced = " + deinterlaced_flag0);
                         mParameters1.setPreviewSize((int) width0, (int) height0);
                         mParameters1.set("CameraHalField", CameraHalField0);
+                        mParameters1.set("CameraHalDeinterlaced", deinterlaced_flag0);
                         mParameters1.set("CameraHalInputWidth", input_width0);
                         mParameters1.set("CameraHalInputHeight", input_height0);
                         mParameters1.set("CameraHalInputFormat", getImageFormatString(InputCameraFormat0.intValue()));
@@ -833,13 +890,15 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                         }
                         if (PreSupFormat2 == null)
                             PreSupFormat2 = ImageFormat.NV21;
-                        Log.d(TAG, "camera " + camera_id + " progressive = " + CameraHalField0);
-                        Log.d(TAG, "camera " + camera_id + " PreviewSizes = " + width0 + "X" + height0);
-                        Log.d(TAG, "camera " + camera_id + " PreSupFormat = " + getImageFormatString(PreSupFormat1.intValue()));
-                        Log.d(TAG, "camera " + camera_id + " Input PreviewSizes = " + input_width0 + "X" + input_height0); 
-                        Log.d(TAG, "camera " + camera_id + " Input PreSupFormat = " + getImageFormatString(InputCameraFormat0.intValue()));                       
+                        Log.d(TAG, "camera " + camera_id + " progressive = " + CameraHalField1);
+                        Log.d(TAG, "camera " + camera_id + " PreviewSizes = " + width1 + "X" + height1);
+                        Log.d(TAG, "camera " + camera_id + " PreSupFormat = " + getImageFormatString(PreSupFormat2.intValue()));
+                        Log.d(TAG, "camera " + camera_id + " Input PreviewSizes = " + input_width1 + "X" + input_height1);
+                        Log.d(TAG, "camera " + camera_id + " Input PreSupFormat = " + getImageFormatString(InputCameraFormat1.intValue()));
+                        Log.d(TAG, "camera " + camera_id + " CameraHalDeinterlaced = " + deinterlaced_flag1);
                         mParameters2.setPreviewSize((int) width1, (int) height1);
                         mParameters2.set("CameraHalField", CameraHalField1);
+                        mParameters1.set("CameraHalDeinterlaced", deinterlaced_flag1);
                         mParameters2.set("CameraHalInputWidth", input_width1);
                         mParameters2.set("CameraHalInputHeight", input_height1);
                         mParameters2.set("CameraHalInputFormat", getImageFormatString(InputCameraFormat1.intValue()));
@@ -1008,6 +1067,7 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                     mCameraTestSpinner[2].setClickable(false);
                     mCameraTestSpinner[6].setClickable(false);
                     mCameraTestSpinner[7].setClickable(false);
+                    mCameraTestSpinner[11].setClickable(false);
                 } else {
                     Toast.makeText(MultiCameraActivity.this, "camera 0 OFF", 800).show();
                     Log.d(TAG, "ToggleButton camera 0 close");
@@ -1017,6 +1077,7 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                     mCameraTestSpinner[2].setClickable(true);
                     mCameraTestSpinner[6].setClickable(true);
                     mCameraTestSpinner[7].setClickable(true);
+                    mCameraTestSpinner[11].setClickable(true);
                 }
             }
             break;
@@ -1030,6 +1091,7 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                     mCameraTestSpinner[5].setClickable(false);
                     mCameraTestSpinner[8].setClickable(false);
                     mCameraTestSpinner[9].setClickable(false);
+                    mCameraTestSpinner[12].setClickable(false);
                 } else {
                     Toast.makeText(MultiCameraActivity.this, "camera 1 OFF", 800).show();
                     Log.d(TAG, "ToggleButton camera 1 close");
@@ -1039,6 +1101,7 @@ public class MultiCameraActivity extends Activity implements OnCheckedChangeList
                     mCameraTestSpinner[5].setClickable(true);
                     mCameraTestSpinner[8].setClickable(true);
                     mCameraTestSpinner[9].setClickable(true);
+                    mCameraTestSpinner[12].setClickable(true);
                 }
             }
             break;

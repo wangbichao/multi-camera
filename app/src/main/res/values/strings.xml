@@ -26,7 +26,9 @@
         <item>720X576</item>
         <item>800X480</item>
         <item>1280X720</item>
+        <item>1440X960</item>
         <item>1920X1080</item>
+        <item>3840X2160</item>
     </string-array>
     <string-array name="camera1_preview_size">
         <item>640X480</item>
@@ -34,7 +36,9 @@
         <item>720X576</item>
         <item>800X480</item>
         <item>1280X720</item>
+        <item>1440X960</item>
         <item>1920X1080</item>
+        <item>3840X2160</item>
     </string-array>
     <string-array name="camera0_image_format">
         <item>NV21</item>
@@ -76,5 +80,12 @@
         <item>DEFAULT</item>
         <item>YUY2</item>
     </string-array>
-
+    <string-array name="camera0_hw_weaing_input">
+    <item>NONE</item>
+    <item>HW_Weaving</item>
+    </string-array>
+    <string-array name="camera1_hw_weaing_input">
+    <item>NONE</item>
+    <item>HW_Weaving</item>
+    </string-array>
 </resources>

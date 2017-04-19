@@ -558,22 +558,26 @@ public class EightCameraActivity extends Activity implements OnClickListener {
 
         switch (v.getId()) {
             case R.id.button1:
-                mOpenThread[4].start();
-                mOpenThread[5].start();
-                mOpenThread[6].start();
-                mOpenThread[7].start();
+                //mOpenThread[4].start();
+                //mOpenThread[5].start();
+                //mOpenThread[6].start();
+                //mOpenThread[7].start();
                 break;
             case R.id.button2:
-                mOpenThread[0].start();
-                mOpenThread[1].start();
-                mOpenThread[2].start();
-                mOpenThread[3].start();
+                //mOpenThread[0].start();
+                //mOpenThread[1].start();
+                //mOpenThread[2].start();
+                //mOpenThread[3].start();
+                // open all camera
+                for (int i = 0; i < Camera_num; i++) {
+                    mOpenThread[i].start();
+                }
                 break;
             case R.id.button3:
-                mOpenThread[4].start();
-                mOpenThread[5].start();
-                mOpenThread[6].start();
-                mOpenThread[7].start();
+                //mOpenThread[4].start();
+                //mOpenThread[5].start();
+                //mOpenThread[6].start();
+                //mOpenThread[7].start();
                 break;
             default:
                 break;

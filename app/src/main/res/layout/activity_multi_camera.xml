@@ -74,7 +74,7 @@
 
             <ToggleButton
                 android:id="@+id/togglebutton1"
-                android:layout_marginTop="180dp"
+                android:layout_marginTop="130dp"
                 android:layout_marginLeft="40dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -96,7 +96,7 @@
             <Spinner
                 android:id="@+id/spinner1"
                 android:layout_marginTop="30dp"
-                android:layout_marginLeft="40dp"
+                android:layout_marginLeft="1110dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:entries="@array/camera0_hal_field"
@@ -104,7 +104,7 @@
 
             <Spinner
                 android:id="@+id/spinner2"
-                android:layout_marginTop="80dp"
+                android:layout_marginTop="30dp"
                 android:layout_marginLeft="40dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -113,7 +113,7 @@
 
             <Spinner
                 android:id="@+id/spinner3"
-                android:layout_marginTop="130dp"
+                android:layout_marginTop="80dp"
                 android:layout_marginLeft="40dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -133,7 +133,7 @@
 
             <Spinner
                 android:id="@+id/spinner7"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="80dp"
                 android:layout_marginLeft="1110dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -142,13 +142,20 @@
 
             <Spinner
                 android:id="@+id/spinner8"
-                android:layout_marginTop="80dp"
+                android:layout_marginTop="130dp"
                 android:layout_marginLeft="1110dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:entries="@array/camera0_image_format_input"
                 />
-
+            <Spinner
+            	android:id="@+id/spinner11"
+                android:layout_marginTop="180dp"
+                android:layout_marginLeft="1110dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:entries="@array/camera0_hw_weaing_input"
+                />
         </RelativeLayout>
 
         <LinearLayout
@@ -174,7 +181,7 @@
 
             <ToggleButton
                 android:id="@+id/togglebutton2"
-                android:layout_marginTop="180dp"
+                android:layout_marginTop="130dp"
                 android:layout_marginLeft="40dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -196,7 +203,7 @@
             <Spinner
                 android:id="@+id/spinner4"
                 android:layout_marginTop="30dp"
-                android:layout_marginLeft="40dp"
+                android:layout_marginLeft="1110dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:entries="@array/camera1_hal_field"
@@ -204,7 +211,7 @@
 
             <Spinner
                 android:id="@+id/spinner5"
-                android:layout_marginTop="80dp"
+                android:layout_marginTop="30dp"
                 android:layout_marginLeft="40dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -213,7 +220,7 @@
 
             <Spinner
                 android:id="@+id/spinner6"
-                android:layout_marginTop="130dp"
+                android:layout_marginTop="80dp"
                 android:layout_marginLeft="40dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -233,7 +240,7 @@
 
             <Spinner
                 android:id="@+id/spinner9"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="80dp"
                 android:layout_marginLeft="1110dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -242,11 +249,19 @@
 
             <Spinner
                 android:id="@+id/spinner10"
-                android:layout_marginTop="80dp"
+                android:layout_marginTop="130dp"
                 android:layout_marginLeft="1110dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:entries="@array/camera1_image_format_input"
+                android:entries="@array/camera0_image_format_input"
+                />
+            <Spinner
+                android:id="@+id/spinner12"
+                android:layout_marginTop="180dp"
+                android:layout_marginLeft="1110dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:entries="@array/camera1_hw_weaing_input"
                 />
 
         </RelativeLayout>
