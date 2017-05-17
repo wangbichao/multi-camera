@@ -1,0 +1,644 @@
+===================================================================================================================================================
+
+1. Linux内核里面，内存申请有哪几个函数，各自的区别？
+kmalloc
+申请一片物理上连续的内存。最大128KB，如果超过128KB会编译报错。物理上连续的内存试用与DMA操作。
+flag会有GFP_kernel可以睡眠和GFP_ATOMIC不可以睡眠之分。
+kzalloc
+与kmalloc相同只是申请时会将内存自动清零。
+vmalloc
+申请一片连续的虚拟内存，在物理上不一定连续，超过128KB是可以使用vmalloc，效率上会略低于kmalloc
+还有一些get free page 直接申请page内存，大小为页的整数倍。
+get_dma_page, 这个函数除了以上功能外还能支持 DMA 传输。 
+
+2. IRQ和FIQ有什么区别，在CPU里面是是怎么做的？
+IRQ 是普通中断， FIQ 是快速中断，
+在 ARM 体系中，对于快速中断模式，有 8 个独立的寄存器，转换模式时无需将数据保存起来，
+而 IRQ 则不能，这样 FIQ 的速度就大大地提高了效率。
+
+3. 
+int *a;
+char *b;
+a 和 b本身是什么类型？
+a中放的是指向int类型的指针的地址
+b中放的是指向char类型的指针的地址
+不同类型的变量有不同的存储方式.
+
+4. 中断的上半部分和下半部分的问题：
+讲下分成上半部分和下半部分的原因，为何要分？讲下如何实现？
+由于中断服务程序执行时间较长或者需要操作硬件接口等待返回，所以中断被分成了上半部和下半部。
+上半部是不能中断，为中断自动调用，一旦调用马上执行，一般会调用有严格时间限制的事件。
+下半部门一般为中断程序实际需要做的事情。一般我们会使用softIRQ/tasket/work queue，都是softIRQ和tasket在硬件中断返回后立马执行。work queue加入系统任务队列后会根据系统环境尽快调用。
+
+5. 内核函数mmap的实现原理，机制？
+通过内存映射的方式将物理内存与进程逻辑中的地址一一对应，并没有数据拷贝的动作。通过内存映射的方式比对系统文件读写效率要高。
+因为read()/write()是系统调用，其中进行了数据拷贝，它首先将文件内容从硬盘拷贝到内核空间的一个缓冲区，然后再将这些数据拷贝到用户空间，实际上有两次拷贝动作。
+而mmap上真正的处理是缺页中断拷贝，mmap将物理地址空间一一映射到用户空间所以中断处理函数根据这个映射关系，直接将文件从硬盘拷贝到用户空间。只进行了一次拷贝。
+因为用户空间的指针ptr时间是不存在的，所以就会触发缺页中断，缺页中断响应函数先到swap分区去寻找，找不到就会通过
+
+6. 驱动里面为什么要有并发、互斥的控制？如何实现？讲个例子？
+多个执行单元同时/并行被执行。对共享资源进行访问时会导致竞态。
+解决竞态的方法是加锁：
+信号量V 如果信号量的值是 0 ( 或更小 ), 进程必须等待直到别人释放信号量.信号量为1时 为自旋锁。 可以睡眠。
+锁：
+原子操作、spin_lock（忙等待的锁）、mutex（互斥锁）、semaphore（信号量）
+atomic（原子操作）：
+最小执行单元，只用于计数操作。
+自旋锁：
+自旋锁不会引起调用者睡眠，调用者就一直循环在那里看是否该自旋锁的保持者已经释放了锁，"自旋"一词就是因此而得名。
+跟互斥锁一样，一个执行单元要想访问被自旋锁保护的共享资源，必须先得到锁，在访问完共享资源后，必须释放锁。
+如果在获取自旋锁时，没有任何执行单元保持该锁，那么将立即得到锁；如果在获取自旋锁时锁已经有保持者，那么获取锁操作将自旋在那里，直到该自旋锁的保持者释放了锁。
+信号量：
+信号量和读写信号量适合于保持时间较长的情况，它们会导致调用者睡眠，因此只能在进程上下文使用
+初始值为1 时为互斥锁。
+互斥锁：
+顾名思义互斥
+同一时间只能有一个任务持有互斥锁，而且只有这个任务可以对互斥锁进行解锁。
+互斥锁不能进行递归锁定或解锁。
+
+7. spinlock自旋锁是如何实现的？
+static spinlock_t lock;
+spin_init(&lock)
+spin_lock(&lock)
+spin_unlock(&lock)
+自旋锁不会引起睡眠，调用者就一直循环在那里看是否该自旋锁的保持者已经释放了锁。
+注意： 
+自旋锁是一种短时间的忙等待，所以自旋锁不适用与长时间的占用资源。
+自旋锁不能递归使用，否则会造成死锁。
+
+8. 任务调度的机制？
+分普通进程调度和实时进程调度
+进程有如下状态
+就绪到执行： 调度程序为其分配时间片后
+执行到就绪： 时间片用完后
+执行到阻塞： 中断，或者请求I/0，申请缓存空间
+阻塞到就绪： 引起阻塞的事件结束了
+
+9. 嵌入式linux中tty设备驱动的体系结构？
+在Linux系统中，终端是一种字符型设备，它有多种类型，通常使用tty来简称各种类型的终端设备；
+tty设备主要分成以下三层：
+第一层是tty核心层tty_core中的tty_fops主要向应用层提供了统一的read/write接口，
+第二层是tty线路规划:目的是方便移植不用关注具体数据的语法处理
+第三层是tty驱动层：根据不同的硬件来填相应的处理函数，init，driver_regidter向核心层发送tty_register_driver来注册字符设备。
+
+10. 嵌入式设备，为加快启动速度，可以做哪些方面的优化？
+去掉一些兼容性的检测，采用固定的设备来启动。根据开机log分析哪些设备开机耗电较多，查看初始化设备能否优化或者放到开机之后完成。
+
+
+11、栈与队列的特点？
+答： 栈是先进后出，只能操作尾节点，一般叫压栈。队列是先进先出，hal中有camera buffer queue 
+
+13、字符型驱动设备你是怎么创建设备文件的，就是/dev/下面的设备文件，供上层应用程序打开使用的文件？
+答：mknod命令结合设备的主设备号和次设备号，可创建一个字符设备文件。
+评：这只是其中一种方式，也叫手动创建设备文件。
+还有UDEV/MDEV自动创建设备文件的方式，UDEV/MDEV是运行在用户态的程序，可以动态管理设备文件，包括创建和删除设备文件，运行在用户态意味着系统要运行之后。
+那么在系统启动期间还有devfs创建了设备文件。一共有三种方式可以创建设备文件。
+
+14、写一个中断服务需要注意哪些？如果中断产生之后要做比较多的事情你是怎么做的？
+答：中断处理例程应该尽量短，把能放在后半段(tasklet，等待队列等)的任务尽量放在后半段。
+评：写一个中断服务程序要注意快进快出，在中断服务程序里面尽量快速采集信息，包括硬件信息，然后推出中断，
+要做其它事情可以使用工作队列或者tasklet方式。也就是中断上半部和下半部。
+第二：中断服务程序中不能有阻塞操作。
+第三：中断服务程序注意返回值，要用操作系统定义的宏做为返回值，而不是自己定义的OK，FAIL之类的。
+
+15、自旋锁和信号量在互斥使用时需要注意哪些？在中断服务程序里面的互斥是使用自旋锁还是信号量？还是两者都能用？为什么？
+答：使用自旋锁的进程不能睡眠，使用信号量的进程可以睡眠。
+中断服务例程中的互斥使用的是自旋锁，原因是在中断上下文中不能发生睡眠，也就是不能发生进程切换。
+
+16、insmod 一个驱动模块，会执行模块中的哪个函数？rmmod呢？这两个函数在设计上要注意哪些？遇到过卸载驱动出现异常没？是什么问题引起的？
+答：insmod调用init函数，rmmod调用exit函数。
+这两个函数在设计时要注意什么？卸载模块时曾出现卸载失败的情形，原因是存在进程正在使用模块，检查代码后发现产生了死锁的问题。
+要注意在init函数中申请的资源在exit函数中要释放，包括存储，ioremap，定时器，工作队列等等。
+也就是一个模块注册进内核，退出内核时要清理所带来的影响，带走一切不留下一点痕迹。
+
+17、在驱动调试过程中遇到过kernel panic/oops没？你是怎么处理的？
+出现野指针空指针直接系统崩溃，一般用addr2line定位到具体发生在哪个函数，一般是数组越界，空指针操作的问题。
+
+18、ioctl和unlock_ioctl有什么区别？
+基本没什么变化，少了入口参数inode，同样改变了返回值。
+改动的意义是去掉打内核锁：lock_kernel()和 unlock_kernel()
+compat_ioctl 用户空间32位，内核空间64位的。需要将内核空间64位转换成32位。
+
+19、驱动中操作物理绝对地址为什么要先IOremap?
+IOremap可以得到物理地址对应的虚拟地址。
+linux系统调用都是通过操作虚拟地址来实现操作物理地址的目的。
+
+20、设备驱动模型三个重要成员是？platfoem总线的匹配规则是？在具体应用上要不要先注册驱动再注册设备？有先后顺序没？
+bus/device/driver
+linux3.0以前是platform device_name 对应 driver_name的匹配关系，之后是通过device_tree来匹配driver_name
+platform bus先被kernel注册，然后系统初始化过程中调用device_initcall中的platform_devices_register将平台设备注册到平台总线，
+然后调用module_init中的platform_driver_register将driver注册到平台总线，然后通过bus_match来查找bus中是否存在device，如果存在就走driver_probe函数。
+
+21、Linux中内核空间及用户空间的区别？用户空间与内核通信方式有哪些?
+虚拟空间：
+32位 2的32次方 4G
+64为 2的64次方 理论上无限大，实际受架构现最多也就128G
+linux对虚拟空间进行了划分，linux虚拟空间地址为0~4G的其中高字节0~1G字节仅供内核使用，被称为内核空间。低字节的3G空间为用户空间。
+内核空间和用户空间通过系统调用来进行通信，
+命令：ioctl sysfs proc
+数据：mmap copy_to_user/copy_from_user read/write
+
+22、Linux中内存划分及如何使用？虚拟地址及物理地址的概念及彼此之间的转化，高端内存概念？
+linux物理内存空间分成 DMA空间 低端内存区 高端内存区
+比如申请一大片连续的虚拟内存空间时，并不会要求物理内存空间连续。
+
+23、linux中中断的实现机制，tasklet与workqueue的区别及底层实现区别？为什么要区分上半部和下半部？
+linux 分成了中断上下部分，上半部分是系统自动调用，一般将快速响应的东西放到上半部门，然后加入tasket或者workqueue来处理实际的事情。
+tasket在硬件中断返回后立马执行。work queue加入系统任务队列后会根据系统环境尽快调用。
+
+24、linux中RCU原理？
+同步机制中的面锁机制
+RCU的设计思想是通过新老指针的替换方式来实现免锁方式的共享保护。
+RCU 对读写者进行了区分，所有对老指针的引用只可能发生在rcu_read_lock和rcu_read_unlock所包含的临界区。
+
+25. 中断的上半部分和下半部分的问题：讲下分成上半部分和下半部分的原因，为何要分？讲下如何实现？
+上半部分执行与硬件相关的处理要求快, 而有些驱动在中断处理程序中又需要完成大量工作,这构成矛盾,所以Linux有所谓的bottom half机制，中断处理程序中所有不要求立即完成的,在开中断的环境下,由底半程序随后完成.
+Linux的底半处理实际上是建立在内核的软中断机制上的.
+Linux 的底半 机制主要有Tasklet 和 work queue 以及 softirq ( 2.4内核则有BH , Task queue , softirq , tasklet 没有work queue)，其实底半可以理解成一种工作的延迟。所以实际使用时跟timer机制基本上一个意思。
+
+26. 内核函数mmap的实现原理，机制？
+mmap函数实现把一个文件映射到一个内存区域，从而我们可以像读写内存一样读写文件，他比单纯调用read/write也要快上许多。
+在某些时候我们可以把内存的内容拷贝到一个文件中实现内存备份，当然，也可以把文件的内容映射到内存来恢复某些服务。
+另外，mmap实现共享内存也是其主要应用之一，mmap系统调用使得进程之间通过映射同一个普通文件实现共享内存。
+
+27. spinlock自旋锁是如何实现的？
+自旋锁在同一时刻只能被最多一个内核任务持有，所以一个时刻只有一个线程允许存在于临界区中。
+这点可以应用在多处理机器、或运行在单处理器上的抢占式内核中需要的锁定服务。
+这里也介绍下信号量的概念，因为它的用法和自旋锁有相似的地方。linux中的信号量是一种睡眠锁。
+如果有一个任务试图获得一个已被持有的信号量时，信号量会将其推入等待队列，然后让其睡眠。这时处理器获得自由去执行其它代码。
+当持有信号量的进程将信号量释放后，在等待队列中的一个任务将被唤醒，从而便可以获得这个信号量。
+
+28.在一个只有128M内存并且没有交换分区的机器上，说说下面两个程序的运行结果
+1
+#define MEMSIZE 1024*1024
+int count = 0;
+void *p = NULL;
+while(1) {
+  p = (void *)malloc(MEMSIZE);
+  if (!p) break;
+  printf("Current allocation %d MB\n", ++count);
+}
+2
+while(1) {
+  p = (void *)malloc(MEMSIZE);
+  if (!p) break;
+  memset(p, 1, MEMSIZE);
+  printf("Current allocation %d MB\n", ++count);
+}
+第一道程序分配内存但没有填充，编译器可能会把内存分配优化掉，程序死循环；
+第二道，程序分配内存并进行填充，系统会一直分配内存，直到内存不足，退出循环。
+
+29.请定义一个宏，比较两个数a、b的大小，不能使用大于、小于、if语句
+搞的比较复杂。主要思想就是a-b的值的最高位是否为0；但是又得考虑整数溢出的问题，所以很复杂。不知道哪位大侠有更好的办法，指点指点。
+positive / nagetive
+#include<stdio.h>
+#define ZHENG(i)((i>> 31)== 0)
+#define FU(i)((i>> 31)!= 0)
+#define COMPARE(a,b)((ZHENG(a)&& FU(b))||(((ZHENG(a)&& ZHENG(b))||(FU(a)&&FU(b)))&&((((a)-(b))>> 31)== 0)))
+void main()
+{
+    int a = 0x80000001;
+    int b = 0x6FFFFFFF;
+    if(COMPARE(a,b))
+    {
+        printf("a >= b\n");
+    }
+    else
+    {
+        printf("a < b\n");
+    }
+}
+
+30.简述LINUX驱动中字符设备和块设备的区别？ 
+字符设备只能以字节为最小单位访问，而块设备以块为单位访问，例如512字节，1024字节等
+块设备可以随机访问，但是字符设备不可以
+字符和块没有访问量大小的限制，块也可以以字节为单位来访问 
+
+31、linux驱动分类
+Linux设备驱动的分类
+　　（1）字符设备。
+　　（2） 块设备。
+　　（3） 网络设备。
+字符设备指那些必须以串行顺序依次进行访问的设备，如触摸屏、磁带驱动器、鼠标等。
+块设备可以用任意顺序进行访问，以块为单位进行操作，如硬盘、软驱等。
+字符设备不经过系统的快速缓冲，而块设备经过系统的快速缓冲。但是，字符设备和块设备并没有明显的界限，如对于Flash设备，符合块设备的特点，但是我们仍然可以把它作为一个字符设备来访问。
+网络设备在Linux里做专门的处理。Linux的网络系统主要是基于BSD unix的socket 机制。在系统和驱动程序之间定义有专门的数据结构(sk_buff)进行数据的传递。系统里支持对发送数据和接收数据的缓存，提供流量控制机制，提供对多协议的支持。
+
+32. void kfree(const void *ptr) 释放由kmalloc()分配出来的内存块
+malloc(), vmalloc()和kmalloc()区别
+[*]kmalloc和vmalloc是分配的是内核的内存,malloc分配的是用户的内存
+[*]kmalloc保证分配的内存在物理上是连续的,vmalloc保证的是在虚拟地址空间上的连续,malloc不保证任何东西(这点是自己猜测的,不一定正确)
+[*]kmalloc能分配的大小有限,vmalloc和malloc能分配的大小相对较大
+[*]内存只有在要被DMA访问的时候才需要物理上连续
+[*]vmalloc比kmalloc要慢
+
+33、module_init的级别
+在syscall_archinit 之后
+
+34、添加驱动
+静态加载和动态加载：
+静态加载是系统启动的时候由内核自动加载的，这个要事先将驱动编译进内核才行；
+动态加载，也就是模块加载方式，这种方式下驱动以模块的形式存放在文件系统中，需要时动态载入内核，这种主要用在调试的时候，比较方便灵活。
+insmod module.ko
+
+35、同步和互斥
+同步和互斥
+　　相交进程之间的关系主要有两种，同步与互斥。所谓互斥，是指散步在不同进程之间的若干程序片断，当某个进程运行其中一个程序片段时，其它进程就不能运行它们之中的任一程序片段，只能等到该进程运行完这个程序片段后才可以运行。所谓同步，是指散步在不同进程之间的若干程序片断，它们的运行必须严格按照规定的某种先后次序来运行，这种先后次序依赖于要完成的特定的任务。
+　　显然，同步是一种更为复杂的互斥，而互斥是一种特殊的同步。也就是说互斥是两个线程之间不可以同时运行，他们会相互排斥，必须等待一个线程运行完毕，另一个才能运行，而同步也是不能同时运行，但他是必须要安照某种次序来运行相应的线程（也是一种互斥）！
+总结:
+　　互斥：是指某一资源同时只允许一个访问者对其进行访问，具有唯一性和排它性。但互斥无法限制访问者对资源的访问顺序，即访问是无序的。
+　　同步：是指在互斥的基础上（大多数情况），通过其它机制实现访问者对资源的有序访问。在大多数情况下，同步已经实现了互斥，特别是所有写入资源的情况必定是互斥的。少数情况是指可以允许多个访问者同时访问资源
+
+36、 Linux设备中字符设备与块设备有什么主要的区别？请分别列举一些实际的设备说出它们是属于哪一类设备。
+ 答：字符设备：字符设备是个能够像字节流（类似文件）一样被访问的设备，由字符设备驱动程序来实现这种特性。字符设备驱动程序通常至少实现open,close,read和write系统调用。字符终端、串口、鼠标、键盘、摄像头、声卡和显卡等就是典型的字符设备。
+块设备：和字符设备类似，块设备也是通过/dev目录下的文件系统节点来访问。块设备上能够容纳文件系统，如：u盘，SD卡，磁盘等。
+    字符设备和块设备的区别仅仅在于内核内部管理数据的方式，也就是内核及驱动程序之间的软件接口，而这些不同对用户来讲是透明的。在内核中，和字符驱动程序相比，块驱动程序具有完全不同的接口
+
+37、查看驱动模块中打印信息应该使用什么命令？如何查看内核中已有的字符设备的信息？如何查看正在使用的有哪些中断号？
+答：1) 查看驱动模块中打印信息的命令：dmesg
+     2) 查看字符设备信息可以用lsmod 和modprobe，lsmod可以查看模块的依赖关系，modprobe在加载模块时会加载其他依赖的模块。
+     3）显示当前使用的中断号cat /proc/interrupt
+
+38、Linux中引入模块机制有什么好处？
+答：首先，模块是预先注册自己以便服务于将来的某个请求，然后他的初始化函数就立即结束。换句话说，模块初始化函数的任务就是为以后调用函数预先作准备。
+好处：
+1) 应用程序在退出时，可以不管资源的释放或者其他的清除工作，但是模块的退出函数却必须仔细此撤销初始化函数所作的一切。
+2) 该机制有助于缩短模块的开发周期。即：注册和卸载都很灵活方便。
+
+39、copy_to_user()和copy_from_user()主要用于实现什么功能？一般用于file_operations结构的哪些函数里面？
+答：由于内核空间和用户空间是不能互相访问的，如果需要访问就必须借助内核函数进行数据读写。copy_to_user():完成内核空间到用户空间的复制，copy_from_user()：是完成用户空间到内核空间的复制。一般用于file_operations结构里的read,write,ioctl等内存数据交换作用的函数。当然，如果ioctl没有用到内存数据复制，那么就不会用到这两个函数。
+
+40、请简述主设备号和次设备号的用途。如果执行mknod chartest c 4 64，创建chartest设备。请分析chartest使用的是那一类设备驱动程序。
+答：
+1）主设备号：主设备号标识设备对应的驱动程序。虽然现代的linux内核允许多个驱动程序共享主设备号，但我们看待的大多数设备仍然按照“一个主设备对应一个驱动程序”的原则组织。
+  次设备号：次设备号由内核使用，用于正确确定设备文件所指的设备。依赖于驱动程序的编写方式，我们可以通过次设备号获得一个指向内核设备的直接指针，也可将此设备号当作设备本地数组的索引。
+2）chartest 由驱动程序4管理，该文件所指的设备是64号设备。（感觉类似于串口终端或者字符设备终端）。
+
+41、设备驱动程序中如何注册一个字符设备？分别解释一下它的几个参数的含义。
+答：注册一个字符设备驱动有两种方法：
+1） void cdev_init(struct cdev *cdev, struct file_operations *fops)
+该注册函数可以将cdev结构嵌入到自己的设备特定的结构中。cdev是一个指向结构体cdev的指针，而fops是指向一个类似于file_operations结构（可以是file_operations结构，但不限于该结构）的指针.
+2） int register_chrdev(unsigned int major, const char *namem , struct file)operations *fopen);
+该注册函数是早期的注册函数，major是设备的主设备号，name是驱动程序的名称，而fops是默认的file_operations结构（这是只限于file_operations结构）。对于register_chrdev的调用将为给定的主设备号注册0－255作为次设备号，并为每个设备建立一个对应的默认cdev结构。
+
+42、请简述中断与DMA的区别。Linux设备驱动程序中，使用哪个函数注册和注销中断处理程序？
+答：1）DMA：是一种无须CPU的参与就可以让外设与系统内存之间进行双向数据传输的硬件机制，使用DMA可以使系统CPU从实际的I／O数据传输过程中摆脱出来，从而大大提高系统的吞吐率。
+中断：是指CPU在执行程序的过程中，出现了某些突发事件时CPU必须暂停执行当前的程序，转去处理突发事件，处理完毕后CPU又返回源程序被中断的位置并继续执行。
+所以中断和MDA的区别就是MDA不需CPU参与而中断是需要CPU参与的。
+2）中断注册函数和中断注销函数
+注册中断：
+int request_irq(unsigned int irq, irqreturn_t (*handler)(int, void *, struct pt_regs *), unsigned long flags, const char *dev_name, void *dev_id);
+参数意义依次是：中断号，中断处理函数，中断管理有关的掩码，中断请求设备名，中断信号线。
+过程是：dev_name设备请求中断->cpu分配中断号->设置中断管理的掩码->分配中断信号线->处理中断函数->完成之后再根据设置情况返回原处理程序处继续处理程序。
+注销中断；
+Void free_irq(unsigned int irq, void *dev_id);
+释放中断和中断信号线
+
+43、断和轮询哪个效率高？怎样决定是采用中断方式还是采用轮询方式去实现驱动？
+答：中断是CPU处于被中状态下来接受设备的信号，而轮询是CPU主动去查询该设备是否有请求。
+凡事都是两面性，所以，看效率不能简单的说那个效率高。
+如果是请求设备是一个频繁请求cpu的设备，或者有大量数据请求的网络设备，那么轮询的效率是比中断高。
+如果是一般设备，并且该设备请求cpu的频率比较底，则用中断效率要高一些。
+
+12、Linux的I2C构架，IIC原理，总线框架，设备编写方法，i2c_msg
+linux的i2c体系结构分为3个组成部分：
+i2c核心：i2c核心提供了i2c总线驱动和设备驱动的注册，注销方法，i2c通信方法，与具体适配器无关的代码以及探测设备，检测设备地址的上层代码。
+i2c总线驱动: i2c总线驱动是对i2c硬件体系结构中适配器端的实现，适配器可由CPU控制，甚至可以直接集成在CPU内部。
+i2c设备驱动：i2c设备驱动是对i2c硬件体系结构中设备端的实现，设备一般挂接在受CPU控制的I2C适配器上，通过i2c适配器与CPU交换数据。
+
+应用程序(用户空间)
+--------------内核空间---------------------
+IIC设备驱动 -> client <-i2c-dev
+
+IIC核心
+
+algorithm -> IIC适配器
+
+IIC控制器驱动
+--------------用户空间---------------------
+IIC控制器
+SCL/SDA
+
+-------------------------------------------
+i2c_driver
+static struct i2c_driver ov2680_driver = {
+	.driver = {
+		.owner = THIS_MODULE,
+		.name = OV2680_NAME,
+		.acpi_match_table = ACPI_PTR(ov2680_acpi_match),
+
+	},
+	.probe = ov2680_probe,
+	.remove = ov2680_remove,
+	.id_table = ov2680_id,
+};
+首先i2c_driver代表一个i2c设备驱动，
+@class：表示我们将组成的是那种设备;
+@attach_adapter：添加总线时，告诉驱动的回调函数；
+@detach_adapter: 总线移除时，调用的回调函数；
+@probe：绑定设备时的回调函数；
+@remove：解除绑定时调用的回调函数；
+@shutdown：设备关闭时回调函数；
+@suspend：设备挂起时调用的回调函数；
+@resume：设备恢复时调用的回调函数；
+@alert：警惕回调函数；
+@command：实现特殊功能的回调函数；
+@driver：设备驱动模型中的驱动；
+@id_table：这个IIC驱动支持的设备链表；
+@detect：检测设备的回调函数；
+@address_list：检测的iic设备的地址；
+@clients：检测到的我们写的client(仅仅IIC核心会用)
+
+i2c_client
+struct i2c_client {
+	unsigned short flags;		/* div., see below		*/
+	unsigned short addr;		/* chip address - NOTE: 7bit	*/
+					/* addresses are stored in the	*/
+					/* _LOWER_ 7 bits		*/
+	char name[I2C_NAME_SIZE];
+	struct i2c_adapter *adapter;	/* the adapter we sit on	*/
+	struct device dev;		/* the device structure		*/
+	int irq;			/* irq issued by device		*/
+	struct list_head detected;
+	int comp_addr_count;
+	struct i2c_comp_address *comp_addrs;
+	unsigned long irq_flags;
+};
+@flag:就是一个标示，I2C_CLIRNT_TEN标示IIC从设备使用的新品地址是10bit的，I2C_CLIRNT_PEC标示设备使用SMBus错误检查；
+@addr：从设备在链接到相应适配器总线上使用的地址；
+@name：设备的名字
+@adapter：挂接设备的适配器；
+@driver：访问设备的驱动；
+@irq：表明由设备产生的中断；
+@detected：一个i2c_driver支持的client的数量或i2c核心的用户空间设备的链表；
+
+i2c_adapter
+struct i2c_adapter {
+	struct module *owner;
+	unsigned int class;		  /* classes to allow probing for */
+	const struct i2c_algorithm *algo; /* the algorithm to access the bus */
+	void *algo_data;
+
+	/* data fields that are valid for all devices	*/
+	struct rt_mutex bus_lock;
+
+	int timeout;			/* in jiffies */
+	int retries;
+	struct device dev;		/* the adapter device */
+
+	int nr;
+	char name[48];
+	struct completion dev_released;
+
+	struct mutex userspace_clients_lock;
+	struct list_head userspace_clients;
+
+	struct i2c_bus_recovery_info *bus_recovery_info;
+}
+i2c_adapter就是一个用于标识物理总线(也就是IIC总线)连同访问它必要的算法的一个结构
+
+i2c_algorithm
+struct i2c_algorithm {
+	/* If an adapter algorithm can't do I2C-level access, set master_xfer
+	   to NULL. If an adapter algorithm can do SMBus access, set
+	   smbus_xfer. If set to NULL, the SMBus protocol is simulated
+	   using common I2C messages */
+	/* master_xfer should return the number of messages successfully
+	   processed, or a negative value on error */
+	int (*master_xfer)(struct i2c_adapter *adap, struct i2c_msg *msgs,
+			   int num);
+	int (*smbus_xfer) (struct i2c_adapter *adap, u16 addr,
+			   unsigned short flags, char read_write,
+			   u8 command, int size, union i2c_smbus_data *data);
+
+	/* To determine what the adapter supports */
+	u32 (*functionality) (struct i2c_adapter *);
+};
+i2c_algorithm是为一类使用相同总线算法寻址的一个接口。
+当适配器不能使用i2c访问设备时，把master_xfer设置为NULL;
+如果一个适配器可以做SMBus访问时，设置smbus_xfer,如果把smbus_xfer设置成NULL，SMBus协议使用通用I2C模拟的消息。
+
+i2c_adapterhe i2c_algorithm的关系
+i2c_adapter对用与物理上的一个适配器，而i2c_algorithm对应一套通信方法，一个i2c适配器需要i2c_algorithm中提供的通信函数来控制适配器上产生特定的访问周期。
+因此i2c_adapter包含了i2c_algorithm的指针
+
+i2c_driver和i2c_client的关系
+i2c_driver包含访问一些种类设备的通用代码，i2c_client表示一个独立的设备，驱动和设备是一对多的关系。每个探测到的设备通过在client数据结构中得到自己的数据。
+
+i2c_adapter和i2c_client的关系
+i2c_adapter和i2c_client的关系与i2c硬件体系中适配器和设备的关系一致，即i2c_client依附于i2c_adapter，由于一个适配器可以连接多个i2c设备，所以i2c_adapter总包含依附于它的i2c_client的链表。
+
+
+i2c_msg
+struct i2c_msg {
+	__u16 addr;	/* slave address			*/
+	__u16 flags;
+#define I2C_M_TEN		0x0010	/* this is a ten bit chip address */
+#define I2C_M_RD		0x0001	/* read data, from slave to master */
+#define I2C_M_STOP		0x8000	/* if I2C_FUNC_PROTOCOL_MANGLING */
+#define I2C_M_NOSTART		0x4000	/* if I2C_FUNC_NOSTART */
+#define I2C_M_REV_DIR_ADDR	0x2000	/* if I2C_FUNC_PROTOCOL_MANGLING */
+#define I2C_M_IGNORE_NAK	0x1000	/* if I2C_FUNC_PROTOCOL_MANGLING */
+#define I2C_M_NO_RD_ACK		0x0800	/* if I2C_FUNC_PROTOCOL_MANGLING */
+#define I2C_M_RECV_LEN		0x0400	/* length will be first received byte */
+	__u16 len;		/* msg length				*/
+	__u8 *buf;		/* pointer to msg data			*/
+};
+向底层传递数据时的结构体。
+
+一个链表的结点结构
+struct Node
+{
+int data ;
+Node *next ;
+};
+typedef struct Node Node ;
+
+已知链表的头结点head,写一个函数把这个链表逆序 ( Intel)
+复制代码
+Node * ReverseList(Node *head) //链表逆序
+{
+if ( head == NULL || head->next == NULL )
+return head;
+Node *p1 = head ;
+Node *p2 = p1->next ;
+Node *p3 = p2->next ;
+p1->next = NULL ;
+while ( p3 != NULL )
+{
+p2->next = p1 ;
+p1 = p2 ;
+p2 = p3 ;
+p3 = p3->next ;
+}
+p2->next = p1 ;
+head = p2 ;
+return head ;
+}
+
+已知两个链表head1 和head2 各自有序，请把它们合并成一个链表依然有序。(保留所有结点，即便大小相同）
+复制代码
+Node * Merge(Node *head1 , Node *head2)
+{
+if ( head1 == NULL)
+return head2 ;
+if ( head2 == NULL)
+return head1 ;
+Node *head = NULL ;
+Node *p1 = NULL;
+Node *p2 = NULL;
+if ( head1->data < head2->data )
+{
+head = head1 ;
+p1 = head1->next;
+p2 = head2 ;
+}
+else
+{
+head = head2 ;
+p2 = head2->next ;
+p1 = head1 ;
+}
+Node *pcurrent = head ;
+while ( p1 != NULL && p2 != NULL)
+{
+if ( p1->data <= p2->data )
+{
+pcurrent->next = p1 ;
+pcurrent = p1 ;
+p1 = p1->next ;
+}
+else
+{
+pcurrent->next = p2 ;
+pcurrent = p2 ;
+p2 = p2->next ;
+}
+}
+if ( p1 != NULL )
+pcurrent->next = p1 ;
+if ( p2 != NULL )
+pcurrent->next = p2 ;
+return head ;
+}
+
+已知两个链表head1 和head2 各自有序，请把它们合并成一个链表依然有序，这次要求用递归方法进行。(Autodesk)
+答案：
+复制代码
+Node * MergeRecursive(Node *head1 , Node *head2)
+{
+if ( head1 == NULL )
+return head2 ;
+if ( head2 == NULL)
+return head1 ;
+Node *head = NULL ;
+if ( head1->data < head2->data )
+{
+head = head1 ;
+head->next = MergeRecursive(head1->next,head2);
+}
+else
+{
+head = head2 ;
+head->next = MergeRecursive(head1,head2->next);
+}
+return head ;
+}
+
+==================================================================================================================================
+一共有三种视频采集方式：使用read、write方式；内存映射方式和用户指针模式。
+read、write方式:在用户空间和内核空间不断拷贝数据，占用了大量用户内存空间，效率不高。
+内存映射方式：把设备里的内存映射到应用程序中的内存控件，直接处理设备内存，这是一种有效的方式。上面的mmap函数就是使用这种方式。
+用户指针模式：内存片段由应用程序自己分配。这点需要在v4l2_requestbuffers里将memory字段设置成V4L2_MEMORY_USERPTR。
+
+==================================================================================================================================
+
+======================================================================================================================
+API1
+getNumberOfCameras() 
+opne camera(int)
+getCameraInfo(int cameraId, Camera.CameraInfo cameraInfo) 
+getParameters()
+setParameters(camera.parameters)
+setDisplayOrientation(int)
+setPreviewDisplay(SurfaceHolder)
+startPreview()
+autofocus()
+setpreviewCallback(camera.PreviewCallback cb)
+======================================================================================================================
+API2
+
+CaptureRequest
+CaptureResult
+CameraCaptureSession
+CameraCaptureSession.CaptureCallback
+
+CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);  
+manager.openCamera(mCameraId, mStateCallback, mBackgroundHandler)
+createCameraPreviewSession //  创建预览session
+SurfaceTexture texture = mTextureView.getSurfaceTexture();  
+createCaptureRequest
+
+createCaptureSession // 创建拍照session
+======================================================================================================================
+V4L2 流程
+1：open("/dev/video",O_RDWR)
+2：queryCAP VIDIOC_QUERYCAP查询能力，视频输入或许音频输入能力。bus_info driver_name version capability:VIDEO_CAPTURE,VIDEO_OUTPUT,VIDEO_OVERLAY
+3：选择视频输入 VDIOC_S_INPUT,struct v4l2_input, 一个设备可以有多个视频输入
+4：设置帧制式和帧格式 PAL/NTSC  frame format size
+5：申请frame_buffer，一般就4个buffer吧 requestBuffers(BUFFER_COUNT,V4L2_MEMORY_USERPTR) V4L2_MEMORY_MMAP,V4L2_MEMORY_USERPTR,V4L2_MEMORY_OVERLAY,V4L2_MEMORY_DMABUF
+6：将申请的frame_buffer映射到用户空间 MMAP，camera_device_allocate_memory 去请求HAL和driver来申请memory/////或者用户空间将userptr user_point传下去camera_stream_qbuf(int camera_id, int stream_id, camera_buffer_t *buffer); 
+7：将申请到的frame_buffer全部入队列，以便存放采集到的数据，VIDIOC_QBUF,V4L2_buffer
+8: 开始视频采集 VIDIOC_STREAMON
+9: 出队列以取得已采集数据的frame_buffer，取得原始采集数据，VIDIOC_DQBUF
+10: 将frame_buffer重新入队列尾，这样可以循环采集，VIDIOC_QBUF
+11: 停止视频的采集 VIDIOC_STREAMOFF
+12: close(fd)
+
+struct v4l2_requestbuffers reqbufs;//向驱动申请帧缓冲的请求，里面包含申请的个数
+struct v4l2_capability cap;//这个设备的功能，比如是否是视频输入设备
+struct v4l2_input input; //视频输入
+struct v4l2_standard std;//视频的制式，比如PAL，NTSC
+struct v4l2_format fmt;//帧的格式，比如宽度，高度等
+
+struct v4l2_buffer buf;//代表驱动中的一帧
+v4l2_std_id stdid;//视频制式，例如：V4L2_STD_PAL_B
+struct v4l2_queryctrl query;//查询的控制
+struct v4l2_control control;//具体控制的值
+
+
+cameraFd = open(“/dev/video0″, O_RDWR | O_NONBLOCK, 0);// 非阻塞方式打开
+cameraFd = open(”/dev/video0″, O_RDWR, 0);// 阻塞方式打开
+应用程序能够使用阻塞模式或非阻塞模式打开视频设备，如果使用非阻塞模式调用视频设备，即使尚未捕获到信息，驱动依旧会把缓存（DQBUFF）里的东西返回给应用程序。
+
+在亚洲，一般使用PAL（720X576）制式的摄像头，而欧洲一般使用NTSC（720X480），使用VIDIOC_QUERYSTD来检测：
+ioctl(fd, VIDIOC_QUERYSTD, &std);
+
+上层传下去的buffer结构体，包含地址，还有buffer的timestamp
+typedef struct {
+    stream_t s;   /**< stream info */
+    void *addr;   /**< buffer addr for userptr and mmap memory mode */
+    int index;    /**< buffer index, filled by HAL. it is used for qbuf and dqbuf in order */
+    int sequence; /**< buffer sequence, filled by HAL, to record buffer dqueue sequence from device */
+    int dmafd;    /**< buffer dmafd for DMA import and export mode */
+    int flags;    /**< buffer flags, used to specify buffer properties */
+    uint64_t timestamp; /**< buffer timestamp, it's a time reference measured in nanosecond */
+    int reserved; /**< reserved for future */
+} camera_buffer_t;
+
+V4L2有一个数据缓存，存放req.count数量的缓存数据。数据缓存采用FIFO的方式，当应用程序调用缓存数据时，缓存队列将最先采集到的 视频数据缓存送出，并重新采集一张视频数据。这个过程需要用到两个ioctl命令,VIDIOC_DQBUF和VIDIOC_QBUF：
+struct v4l2_buffer buf;
+memset(&buf,0,sizeof(buf));
+buf.type=V4L2_BUF_TYPE_VIDEO_CAPTURE;
+buf.memory=V4L2_MEMORY_MMAP;
+buf.index=0;
+//读取缓存
+if (ioctl(cameraFd, VIDIOC_DQBUF, &buf) == -1)
+{
+	return -1;
+}
+//…………视频处理算法
+//重新放入缓存队列
+if (ioctl(cameraFd, VIDIOC_QBUF, &buf) == -1) {
+	return -1;
+}
